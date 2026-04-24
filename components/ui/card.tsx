@@ -10,10 +10,10 @@ export function Card({ children }: PropsWithChildren) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: tokens.colors.surface,
-    borderColor: tokens.colors.border,
+    borderColor: tokens.colors.borderSubtle,
     borderWidth: 1,
     borderRadius: tokens.radius.lg,
     padding: tokens.spacing.md,
-    gap: tokens.spacing.sm,
+    gap: 8,
   },
 });

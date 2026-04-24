@@ -32,7 +32,8 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: tokens.spacing.lg,
-    gap: tokens.spacing.md,
+    paddingTop: 6,
+    gap: 12,
   },
   scrollContent: {
     paddingBottom: tokens.spacing.xl,

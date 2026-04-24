@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { Text, View, StyleSheet } from 'react-native';
 
 import { AppButton } from '@/components/ui/app-button';
@@ -12,7 +13,7 @@ export default function WorkoutsScreen() {
 
   return (
     <AppScreen>
-      <SectionHeader title="Workout History" subtitle="Hevy-style session list foundation" />
+      <SectionHeader title="Workout History" subtitle="Session log" />
 
       {hasWorkouts ? (
         workouts.map((item) => (
@@ -33,7 +34,7 @@ export default function WorkoutsScreen() {
         </Card>
       )}
 
-      <AppButton>Start New Workout</AppButton>
+      <AppButton onPress={() => router.push('/(tabs)/start-workout')}>Start New Workout</AppButton>
     </AppScreen>
   );
 }
@@ -41,5 +42,5 @@ export default function WorkoutsScreen() {
 const styles = StyleSheet.create({
   title: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
   text: { color: tokens.colors.textSecondary, fontSize: tokens.typography.caption },
-  row: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 },
 });

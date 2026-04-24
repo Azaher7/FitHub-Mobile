@@ -5,53 +5,54 @@ import { tokens } from '@/constants/design-tokens';
 
 type AppButtonProps = PropsWithChildren<{
   onPress?: () => void;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'ghost';
 }>;
 
 export function AppButton({ children, onPress, variant = 'primary' }: AppButtonProps) {
-  const secondary = variant === 'secondary';
-
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.base,
-        secondary ? styles.secondary : styles.primary,
-        pressed && styles.pressed,
-      ]}>
-      <Text style={[styles.label, secondary ? styles.secondaryLabel : styles.primaryLabel]}>{children}</Text>
+      style={({ pressed }) => [styles.base, styles[variant], pressed && styles.pressed]}>
+      <Text style={[styles.label, styles[`${variant}Label`]]}>{children}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 44,
-    borderRadius: tokens.radius.md,
+    minHeight: 40,
+    borderRadius: tokens.radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: tokens.spacing.md,
+    paddingHorizontal: 16,
     borderWidth: 1,
   },
   primary: {
-    backgroundColor: tokens.colors.accent,
-    borderColor: tokens.colors.accent,
+    backgroundColor: tokens.colors.textPrimary,
+    borderColor: tokens.colors.textPrimary,
   },
   secondary: {
-    backgroundColor: tokens.colors.accentSoft,
-    borderColor: tokens.colors.border,
+    backgroundColor: tokens.colors.surfaceElevated,
+    borderColor: tokens.colors.borderSubtle,
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+    borderColor: tokens.colors.borderSubtle,
   },
   label: {
-    fontSize: tokens.typography.body,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '600',
   },
   primaryLabel: {
-    color: tokens.colors.textPrimary,
+    color: '#0B0D12',
   },
   secondaryLabel: {
+    color: tokens.colors.textPrimary,
+  },
+  ghostLabel: {
     color: tokens.colors.textSecondary,
   },
   pressed: {
-    opacity: 0.9,
+    opacity: 0.82,
   },
 });

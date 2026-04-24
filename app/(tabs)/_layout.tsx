@@ -11,10 +11,12 @@ export default function TabsLayout() {
         tabBarActiveTintColor: tokens.colors.textPrimary,
         tabBarInactiveTintColor: tokens.colors.textMuted,
         tabBarStyle: {
-          backgroundColor: tokens.colors.surface,
-          borderTopColor: tokens.colors.border,
-          height: 66,
+          backgroundColor: '#0E1118',
+          borderTopColor: tokens.colors.borderSubtle,
+          borderTopWidth: 1,
+          height: 62,
           paddingTop: 8,
+          paddingBottom: 8,
         },
         tabBarLabelStyle: {
           fontSize: 11,
@@ -25,44 +27,38 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="workouts"
         options={{
           title: 'Workouts',
-          tabBarIcon: ({ color, size }) => <Ionicons name="barbell" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="start-workout"
-        options={{
-          title: 'Start',
-          tabBarIcon: ({ color, size }) => <Ionicons name="add-circle" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="barbell-outline" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="cardio"
         options={{
           title: 'Cardio',
-          tabBarIcon: ({ color, size }) => <Ionicons name="walk" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="walk-outline" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="social"
         options={{
           title: 'Social',
-          tabBarIcon: ({ color, size }) => <Ionicons name="people" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="people-outline" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" color={color} size={size} />,
         }}
       />
+      <Tabs.Screen name="start-workout" options={{ href: null }} />
     </Tabs>
   );
 }
