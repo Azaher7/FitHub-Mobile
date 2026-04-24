@@ -1,78 +1,80 @@
 import { router } from 'expo-router';
-import { Text, View, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { AppButton } from '@/components/ui/app-button';
 import { AppScreen } from '@/components/ui/app-screen';
 import { Card } from '@/components/ui/card';
+import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { SectionHeader } from '@/components/ui/section-header';
+import { StatCard } from '@/components/ui/stat-card';
 import { tokens } from '@/constants/design-tokens';
 import { weeklySummary, workouts } from '@/data/mock';
 
 export default function HomeScreen() {
   return (
-    <AppScreen>
-      <View style={styles.hero}>
-        <Text style={styles.kicker}>FIT HUB</Text>
-        <Text style={styles.title}>Welcome back.</Text>
-        <Text style={styles.subtitle}>You are 1 session away from maintaining your streak.</Text>
-      </View>
-
-      <Card>
-        <SectionHeader title="Weekly Summary" subtitle="Current week" />
-        <View style={styles.grid}>
-          <Stat label="Workouts" value={String(weeklySummary.workouts)} />
-          <Stat label="Minutes" value={String(weeklySummary.totalMinutes)} />
-          <Stat label="Streak" value={`${weeklySummary.streak}d`} />
-          <Stat label="Volume" value={weeklySummary.volume} />
+    <View style={{ flex: 1 }}>
+      <AppScreen>
+        <View style={styles.hero}>
+          <Text style={styles.eyebrow}>FITNESS DASHBOARD</Text>
+          <Text style={styles.title}>Welcome back, Jordan</Text>
+          <Text style={styles.subtitle}>You are on a {weeklySummary.streak}-day streak. Keep the momentum.</Text>
         </View>
-      </Card>
 
-      <View style={styles.actionRow}>
-        <AppButton onPress={() => router.push('/(tabs)/start-workout')}>Start workout</AppButton>
-        <AppButton variant="secondary" onPress={() => router.push('/(tabs)/cardio')}>Log cardio</AppButton>
-        <AppButton variant="ghost" onPress={() => router.push('/(tabs)/workouts')}>History</AppButton>
-      </View>
+        <View style={styles.statsGrid}>
+          <StatCard label="Workouts this week" value={String(weeklySummary.workoutsThisWeek)} accent="#6BFFB0" />
+          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#8FD4FF" />
+          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#A998FF" />
+          <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#FFD985" />
+        </View>
 
-      <SectionHeader title="Recent Workouts" />
-      {workouts.slice(0, 2).map((workout) => (
-        <Card key={workout.id}>
-          <Text style={styles.cardTitle}>{workout.title}</Text>
-          <Text style={styles.meta}>{workout.focus}</Text>
-          <Text style={styles.meta}>{workout.date} · {workout.duration} · {workout.volume}</Text>
+        <Card>
+          <SectionHeader title="Quick Actions" />
+          <View style={styles.quickActions}>
+            <QuickAction label="Start Workout" onPress={() => router.push('/start-workout')} />
+            <QuickAction label="Log Cardio" onPress={() => router.push('/(tabs)/train')} />
+          </View>
         </Card>
-      ))}
 
-      <Card>
-        <SectionHeader title="Progress" subtitle="Charts and PR trends appear in Phase 2" />
-      </Card>
-    </AppScreen>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.stat}>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+        <SectionHeader title="Recent Workouts" subtitle="Latest sessions" />
+        {workouts.map((workout) => (
+          <Card key={workout.id}>
+            <Text style={styles.workoutTitle}>{workout.title}</Text>
+            <Text style={styles.meta}>{workout.focus}</Text>
+            <Text style={styles.meta}>{workout.date} · {workout.duration} · {workout.volume}</Text>
+          </Card>
+        ))}
+      </AppScreen>
+      <FloatingActionButton />
     </View>
   );
 }
 
+function QuickAction({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.actionBtn, pressed && styles.pressedBtn]}>
+      <Text style={styles.actionText}>{label}</Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
-  hero: { gap: 4, marginBottom: 2 },
-  kicker: { color: tokens.colors.textMuted, fontWeight: '700', letterSpacing: 1.2, fontSize: 12 },
-  title: { color: tokens.colors.textPrimary, fontSize: tokens.typography.h1, fontWeight: '800' },
-  subtitle: { color: tokens.colors.textSecondary, fontSize: tokens.typography.body, lineHeight: 20 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  stat: {
-    width: '48%',
-    backgroundColor: '#141823',
-    borderRadius: tokens.radius.md,
-    padding: 10,
+  hero: { gap: 6, marginBottom: 4 },
+  eyebrow: { color: tokens.colors.textMuted, fontSize: 11, letterSpacing: 1.2, fontWeight: '700' },
+  title: { color: tokens.colors.textPrimary, fontSize: 30, fontWeight: '800', lineHeight: 36 },
+  subtitle: { color: tokens.colors.textSecondary, fontSize: 14, lineHeight: 19 },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  quickActions: { flexDirection: 'row', gap: 8 },
+  actionBtn: {
+    flex: 1,
+    minHeight: 42,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: '#1A2234',
+    borderWidth: 1,
+    borderColor: tokens.colors.borderSubtle,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  statValue: { color: tokens.colors.textPrimary, fontSize: 20, fontWeight: '700' },
-  statLabel: { color: tokens.colors.textMuted, marginTop: 2, fontSize: 12 },
-  actionRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  cardTitle: { color: tokens.colors.textPrimary, fontSize: 17, fontWeight: '700' },
-  meta: { color: tokens.colors.textSecondary, fontSize: tokens.typography.caption },
+  pressedBtn: { transform: [{ scale: 0.98 }] },
+  actionText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 13 },
+  workoutTitle: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
+  meta: { color: tokens.colors.textSecondary, fontSize: 12 },
 });

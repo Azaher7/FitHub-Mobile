@@ -10,17 +10,18 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: tokens.colors.textPrimary,
         tabBarInactiveTintColor: tokens.colors.textMuted,
+        sceneStyle: { backgroundColor: tokens.colors.background },
         tabBarStyle: {
-          backgroundColor: '#0E1118',
+          backgroundColor: '#0D1016',
           borderTopColor: tokens.colors.borderSubtle,
           borderTopWidth: 1,
-          height: 62,
+          height: 64,
           paddingTop: 8,
-          paddingBottom: 8,
+          paddingBottom: 10,
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: '700',
         },
       }}>
       <Tabs.Screen
@@ -31,17 +32,10 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="workouts"
+        name="train"
         options={{
-          title: 'Workouts',
+          title: 'Train',
           tabBarIcon: ({ color, size }) => <Ionicons name="barbell-outline" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="cardio"
-        options={{
-          title: 'Cardio',
-          tabBarIcon: ({ color, size }) => <Ionicons name="walk-outline" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
@@ -58,7 +52,6 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" color={color} size={size} />,
         }}
       />
-      <Tabs.Screen name="start-workout" options={{ href: null }} />
     </Tabs>
   );
 }

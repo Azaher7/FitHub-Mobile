@@ -22,16 +22,19 @@ export type SocialPost = {
   handle: string;
   text: string;
   workout: string;
+  exercises: string;
+  duration: string;
+  volume: string;
   likes: number;
   comments: number;
   timeAgo: string;
 };
 
 export const weeklySummary = {
-  workouts: 4,
+  workoutsThisWeek: 4,
+  totalWorkouts: 124,
   totalMinutes: 282,
   streak: 6,
-  volume: '31,400 lb',
 };
 
 export const workouts: WorkoutEntry[] = [
@@ -50,14 +53,6 @@ export const workouts: WorkoutEntry[] = [
     duration: '67 min',
     date: 'Yesterday',
     volume: '12,870 lb',
-  },
-  {
-    id: 'w3',
-    title: 'Push Hypertrophy',
-    focus: 'Chest / Shoulders / Triceps',
-    duration: '49 min',
-    date: 'Apr 20',
-    volume: '8,020 lb',
   },
 ];
 
@@ -85,8 +80,11 @@ export const socialFeed: SocialPost[] = [
     id: 's1',
     user: 'Maya Rivera',
     handle: '@maya.r',
-    text: 'Dialed in my tempo squats today. Legs are cooked.',
+    text: 'Tempo squats felt strong today. Controlled every rep and pushed the final set.',
     workout: 'Leg Day Power',
+    exercises: 'Back Squat, RDL, Walking Lunges',
+    duration: '66 min',
+    volume: '12,640 lb',
     likes: 42,
     comments: 8,
     timeAgo: '1h',
@@ -95,8 +93,11 @@ export const socialFeed: SocialPost[] = [
     id: 's2',
     user: 'Chris Nolan',
     handle: '@cnolanfit',
-    text: 'New 5k PR. Last mile hurt but worth it.',
-    workout: 'Morning Run · 5.0 mi',
+    text: 'Push day dialed. Hit a clean top set on bench and finished with high-rep dips.',
+    workout: 'Push Day',
+    exercises: 'Bench Press, Incline DB Press, Dips',
+    duration: '54 min',
+    volume: '8,980 lb',
     likes: 67,
     comments: 14,
     timeAgo: '3h',

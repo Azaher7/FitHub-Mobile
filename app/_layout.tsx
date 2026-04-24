@@ -22,6 +22,16 @@ export default function RootLayout() {
     <ThemeProvider value={appTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="start-workout"
+          options={{
+            headerShown: true,
+            title: 'Start Workout',
+            presentation: 'card',
+            headerStyle: { backgroundColor: tokens.colors.background },
+            headerTintColor: tokens.colors.textPrimary,
+          }}
+        />
       </Stack>
       <StatusBar style="light" />
     </ThemeProvider>

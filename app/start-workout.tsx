@@ -14,7 +14,7 @@ export default function StartWorkoutScreen() {
 
   return (
     <AppScreen>
-      <SectionHeader title="Start Workout" subtitle="Workout builder foundation" />
+      <SectionHeader title="Start Workout" subtitle="Build your session" />
 
       <Card>
         <Text style={styles.heading}>Workout Name</Text>
@@ -26,19 +26,14 @@ export default function StartWorkoutScreen() {
         {exercises.map((exercise, index) => (
           <View key={exercise} style={styles.exerciseRow}>
             <Text style={styles.value}>{index + 1}. {exercise}</Text>
-            <Text style={styles.muted}>Sets placeholder: 3 x 8-12</Text>
+            <Text style={styles.muted}>3 sets · 8-12 reps</Text>
           </View>
         ))}
         <Pressable
           onPress={() => setExercises((prev) => [...prev, `Exercise ${prev.length + 1}`])}
-          style={styles.addExerciseBtn}>
+          style={({ pressed }) => [styles.addExerciseBtn, pressed && styles.pressed]}>
           <Text style={styles.addExerciseText}>+ Add Exercise</Text>
         </Pressable>
-      </Card>
-
-      <Card>
-        <Text style={styles.heading}>Set Rows</Text>
-        <Text style={styles.muted}>Set tracking table will be added in Phase 2 with persistence.</Text>
       </Card>
 
       <AppButton>Save Workout (Placeholder)</AppButton>
@@ -55,10 +50,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: tokens.radius.md,
     borderWidth: 1,
-    borderColor: tokens.colors.border,
-    backgroundColor: tokens.colors.surfaceElevated,
+    borderColor: tokens.colors.borderSubtle,
+    backgroundColor: '#161D2B',
     paddingVertical: 10,
     alignItems: 'center',
   },
-  addExerciseText: { color: tokens.colors.accent, fontWeight: '700' },
+  pressed: { transform: [{ scale: 0.98 }] },
+  addExerciseText: { color: tokens.colors.textPrimary, fontWeight: '700' },
 });
