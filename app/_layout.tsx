@@ -1,26 +1,15 @@
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
 
-import { tokens } from '@/constants/design-tokens';
 import { AuthProvider, useAuth } from '@/providers/auth-provider';
-
-const appTheme = {
-  ...DarkTheme,
-  colors: {
-    ...DarkTheme.colors,
-    background: tokens.colors.background,
-    card: tokens.colors.surface,
-    border: tokens.colors.border,
-    primary: tokens.colors.accent,
-    text: tokens.colors.textPrimary,
-  },
-};
+import { AppThemeProvider, useAppTheme } from '@/providers/theme-provider';
 
 function RootNavigator() {
   const { session, loading } = useAuth();
+  const { tokens } = useAppTheme();
 
   if (loading && !session) {
     return (
@@ -53,13 +42,35 @@ function RootNavigator() {
   );
 }
 
-export default function RootLayout() {
+function AppNavigationTheme() {
+  const { tokens, isDark } = useAppTheme();
+
+  const appTheme = {
+    ...(isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
+      background: tokens.colors.background,
+      card: tokens.colors.surface,
+      border: tokens.colors.border,
+      primary: tokens.colors.accent,
+      text: tokens.colors.textPrimary,
+    },
+  };
+
   return (
     <ThemeProvider value={appTheme}>
       <AuthProvider>
         <RootNavigator />
       </AuthProvider>
-      <StatusBar style="light" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
     </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AppThemeProvider>
+      <AppNavigationTheme />
+    </AppThemeProvider>
   );
 }

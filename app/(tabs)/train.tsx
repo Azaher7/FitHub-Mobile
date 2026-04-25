@@ -1,102 +1,253 @@
-import { router } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppScreen } from '@/components/ui/app-screen';
 import { Card } from '@/components/ui/card';
 import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { SectionHeader } from '@/components/ui/section-header';
-import { tokens } from '@/constants/design-tokens';
-import { cardioSessions, workoutPlans as mockWorkoutPlans, workouts } from '@/data/mock';
-import { WorkoutPlanRow, createWorkoutPlan, fetchWorkoutPlans } from '@/lib/supabase-rest';
-import { useAuth } from '@/providers/auth-provider';
+import { cardioSessions, exerciseLibrary, mockPr, workouts } from '@/data/mock';
+import { useAppTheme } from '@/providers/theme-provider';
 
-const splitOptions = ['Upper / Lower', 'Push Pull Legs', 'Arnold Split'] as const;
+type TrainMode = 'exercise-library' | 'cardio';
+type CardioMode = 'timed' | 'gps';
 
 export default function TrainScreen() {
-  const { session } = useAuth();
-  const [plans, setPlans] = useState<WorkoutPlanRow[]>([]);
-  const [selectedSplit, setSelectedSplit] = useState<string>(splitOptions[0]);
-  const [planLoading, setPlanLoading] = useState(true);
-  const [planError, setPlanError] = useState<string | null>(null);
+  const { tokens } = useAppTheme();
+  const [trainMode, setTrainMode] = useState<TrainMode>('exercise-library');
+  const [cardioMode, setCardioMode] = useState<CardioMode>('timed');
+  const [isGpsLive, setIsGpsLive] = useState(false);
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
+  const [showPrToast, setShowPrToast] = useState(false);
 
-  useEffect(() => {
-    const load = async () => {
-      if (!session) return;
+  const [customName, setCustomName] = useState('');
+  const [customMuscleGroup, setCustomMuscleGroup] = useState('');
+  const [customNotes, setCustomNotes] = useState('');
 
-      setPlanLoading(true);
-      setPlanError(null);
-      try {
-        const rows = await fetchWorkoutPlans(session.access_token, session.user.id);
-        setPlans(rows);
-      } catch (err) {
-        setPlanError(err instanceof Error ? err.message : 'Unable to load workout plans');
-      } finally {
-        setPlanLoading(false);
-      }
-    };
+  const selectedExercise = useMemo(
+    () => exerciseLibrary.find((exercise) => exercise.id === selectedExerciseId) ?? null,
+    [selectedExerciseId],
+  );
 
-    load();
-  }, [session]);
-
-  const planList = useMemo(() => {
-    if (plans.length > 0) return plans;
-    return mockWorkoutPlans.map((plan) => ({ id: plan.id, name: plan.name, split: plan.name }));
-  }, [plans]);
-
-  const onCreatePlan = async () => {
-    if (!session) return;
-
-    try {
-      setPlanError(null);
-      const created = await createWorkoutPlan(session.access_token, {
-        user_id: session.user.id,
-        name: `${selectedSplit} Plan`,
-        split: selectedSplit,
-      });
-
-      setPlans((prev) => [created, ...prev]);
-    } catch (err) {
-      setPlanError(err instanceof Error ? err.message : 'Unable to create plan');
-    }
-  };
+  const styles = StyleSheet.create({
+    actions: { flexDirection: 'row', gap: 8 },
+    pill: {
+      flex: 1,
+      minHeight: 42,
+      borderRadius: tokens.radius.pill,
+      backgroundColor: tokens.colors.input,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    pillActive: { backgroundColor: tokens.colors.accentSoft, borderColor: tokens.colors.accent },
+    pressed: { transform: [{ scale: 0.98 }] },
+    pillText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 13 },
+    helper: { color: tokens.colors.textMuted, fontSize: 12, marginTop: 6 },
+    title: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
+    meta: { color: tokens.colors.textSecondary, fontSize: 12 },
+    exerciseRow: { flexDirection: 'row', gap: 12, alignItems: 'center' },
+    thumb: {
+      width: 52,
+      height: 52,
+      borderRadius: tokens.radius.md,
+      backgroundColor: tokens.colors.input,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    thumbText: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
+    rowActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
+    actionBtn: {
+      borderRadius: tokens.radius.pill,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      backgroundColor: tokens.colors.input,
+    },
+    actionPrimary: { backgroundColor: tokens.colors.accent, borderColor: tokens.colors.accent },
+    actionBtnText: { color: tokens.colors.textSecondary, fontWeight: '700', fontSize: 12 },
+    actionPrimaryText: { color: '#FFFFFF' },
+    input: {
+      minHeight: 42,
+      borderRadius: tokens.radius.md,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      backgroundColor: tokens.colors.input,
+      paddingHorizontal: 12,
+      color: tokens.colors.textPrimary,
+      textAlignVertical: 'top',
+    },
+    gpsMapPlaceholder: {
+      minHeight: 180,
+      borderRadius: tokens.radius.md,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      borderStyle: 'dashed',
+      backgroundColor: tokens.colors.input,
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 6,
+    },
+    gpsStats: { flexDirection: 'row', gap: 8 },
+    stat: {
+      flex: 1,
+      borderRadius: tokens.radius.md,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      padding: 10,
+      backgroundColor: tokens.colors.input,
+    },
+    statLabel: { color: tokens.colors.textMuted, fontSize: 11 },
+    statValue: { color: tokens.colors.textPrimary, fontWeight: '700', marginTop: 2 },
+    modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.58)', justifyContent: 'center', padding: 18 },
+    modalCard: {
+      borderRadius: tokens.radius.lg,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      backgroundColor: tokens.colors.surface,
+      padding: 16,
+      gap: 10,
+    },
+    largeVisual: {
+      minHeight: 160,
+      borderRadius: tokens.radius.md,
+      backgroundColor: tokens.colors.input,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+    },
+    largeVisualText: { color: tokens.colors.textMuted, fontSize: 12 },
+    prToast: {
+      borderRadius: tokens.radius.md,
+      backgroundColor: tokens.colors.accentSoft,
+      borderWidth: 1,
+      borderColor: tokens.colors.accent,
+      padding: 12,
+      gap: 2,
+    },
+    prLabel: { color: tokens.colors.accent, fontWeight: '800', fontSize: 12 },
+    prText: { color: tokens.colors.textPrimary, fontSize: 14, fontWeight: '700' },
+  });
 
   return (
     <View style={{ flex: 1 }}>
       <AppScreen>
-        <SectionHeader title="Train" subtitle="Workouts, cardio, and plans" />
+        <SectionHeader title="Train" subtitle="Exercise library, cardio flow, and PR moments" />
 
         <View style={styles.actions}>
-          <ActionPill label="Start Workout" onPress={() => router.push('/start-workout')} />
-          <ActionPill label="Start Cardio" onPress={() => {}} />
+          <ModeChip label="Exercise Library" active={trainMode === 'exercise-library'} onPress={() => setTrainMode('exercise-library')} />
+          <ModeChip label="Cardio" active={trainMode === 'cardio'} onPress={() => setTrainMode('cardio')} />
         </View>
 
-        <Card>
-          <SectionHeader title="Create New Plan" subtitle="Name your split" />
-          <View style={styles.splitRow}>
-            {splitOptions.map((split) => (
-              <Pressable
-                key={split}
-                onPress={() => setSelectedSplit(split)}
-                style={[styles.splitChip, selectedSplit === split && styles.splitChipActive]}>
-                <Text style={[styles.splitChipText, selectedSplit === split && styles.splitChipTextActive]}>{split}</Text>
-              </Pressable>
-            ))}
-          </View>
-          <Pressable onPress={onCreatePlan} style={({ pressed }) => [styles.createBtn, pressed && styles.pressed]}>
-            <Text style={styles.createText}>+ Create Plan</Text>
-          </Pressable>
-          {planLoading ? <Text style={styles.helper}>Loading plans...</Text> : null}
-          {planError ? <Text style={styles.error}>{planError}</Text> : null}
-        </Card>
-
-        <SectionHeader title="Workout Plans" />
-        {planList.map((plan) => (
-          <Card key={plan.id}>
-            <Text style={styles.planName}>{plan.name}</Text>
-            <Text style={styles.helper}>{plan.split ?? 'Split not set'}</Text>
+        {showPrToast ? (
+          <Card>
+            <View style={styles.prToast}>
+              <Text style={styles.prLabel}>NEW PR</Text>
+              <Text style={styles.prText}>{mockPr.exercise}</Text>
+              <Text style={styles.meta}>{mockPr.result}</Text>
+            </View>
           </Card>
-        ))}
+        ) : null}
+
+        {trainMode === 'exercise-library' ? (
+          <>
+            <SectionHeader title="Exercise Picker" subtitle="Choose movements to add to workouts" />
+            {exerciseLibrary.map((exercise) => (
+              <Card key={exercise.id}>
+                <View style={styles.exerciseRow}>
+                  <View style={styles.thumb}><Text style={styles.thumbText}>PREVIEW</Text></View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.title}>{exercise.name}</Text>
+                    <Text style={styles.meta}>{exercise.muscleGroup}</Text>
+                  </View>
+                </View>
+                <View style={styles.rowActions}>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]} onPress={() => setShowPrToast(true)}>
+                    <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Add</Text>
+                  </Pressable>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]} onPress={() => setSelectedExerciseId(exercise.id)}>
+                    <Text style={styles.actionBtnText}>View</Text>
+                  </Pressable>
+                </View>
+              </Card>
+            ))}
+
+            <Card>
+              <SectionHeader title="Create custom exercise" subtitle="Mock local input only" />
+              <TextInput value={customName} onChangeText={setCustomName} placeholder="Exercise name" placeholderTextColor={tokens.colors.textMuted} style={styles.input} />
+              <TextInput value={customMuscleGroup} onChangeText={setCustomMuscleGroup} placeholder="Muscle group" placeholderTextColor={tokens.colors.textMuted} style={styles.input} />
+              <TextInput
+                value={customNotes}
+                onChangeText={setCustomNotes}
+                placeholder="Notes"
+                placeholderTextColor={tokens.colors.textMuted}
+                style={[styles.input, { minHeight: 86, paddingTop: 12 }]}
+                multiline
+              />
+              <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]}>
+                <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Save (Mock)</Text>
+              </Pressable>
+            </Card>
+          </>
+        ) : (
+          <>
+            <SectionHeader title="Cardio Flow" subtitle="Timed sessions now, live GPS tracking later" />
+            <View style={styles.actions}>
+              <ModeChip label="Timed cardio" active={cardioMode === 'timed'} onPress={() => setCardioMode('timed')} />
+              <ModeChip label="Outdoor GPS" active={cardioMode === 'gps'} onPress={() => setCardioMode('gps')} />
+            </View>
+
+            {cardioMode === 'timed' ? (
+              <Card>
+                <Text style={styles.title}>Timed Cardio</Text>
+                <Text style={styles.meta}>Start a simple timer-based run, ride, or walk session.</Text>
+                <View style={styles.rowActions}>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]}>
+                    <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Start Timer</Text>
+                  </Pressable>
+                </View>
+              </Card>
+            ) : (
+              <Card>
+                <Text style={styles.title}>Outdoor GPS Tracking (Coming Soon)</Text>
+                <Text style={styles.meta}>UI-only preview. Live location and map tracking will be enabled in a future phase.</Text>
+                <View style={styles.gpsMapPlaceholder}>
+                  <Text style={styles.largeVisualText}>Map Placeholder</Text>
+                  <Text style={styles.helper}>Future live tracking view</Text>
+                </View>
+                <View style={styles.gpsStats}>
+                  <View style={styles.stat}><Text style={styles.statLabel}>Distance</Text><Text style={styles.statValue}>1.84 mi</Text></View>
+                  <View style={styles.stat}><Text style={styles.statLabel}>Pace</Text><Text style={styles.statValue}>8:44 /mi</Text></View>
+                  <View style={styles.stat}><Text style={styles.statLabel}>Time</Text><Text style={styles.statValue}>16:05</Text></View>
+                </View>
+                <View style={styles.rowActions}>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]} onPress={() => setIsGpsLive(true)}>
+                    <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Start</Text>
+                  </Pressable>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]}>
+                    <Text style={styles.actionBtnText}>{isGpsLive ? 'Pause' : 'Pause (disabled)'}</Text>
+                  </Pressable>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]} onPress={() => setIsGpsLive(false)}>
+                    <Text style={styles.actionBtnText}>Stop</Text>
+                  </Pressable>
+                </View>
+              </Card>
+            )}
+
+            <SectionHeader title="Cardio History" />
+            {cardioSessions.map((c) => (
+              <Card key={c.id}>
+                <Text style={styles.title}>{c.type}</Text>
+                <Text style={styles.meta}>{c.distance} · {c.pace} · {c.duration}</Text>
+                <Text style={styles.meta}>{c.date}</Text>
+              </Card>
+            ))}
+          </>
+        )}
 
         <SectionHeader title="Workout History" />
         {workouts.map((w) => (
@@ -106,67 +257,35 @@ export default function TrainScreen() {
             <Text style={styles.meta}>{w.date} · {w.duration} · {w.volume}</Text>
           </Card>
         ))}
-
-        <SectionHeader title="Cardio History" />
-        {cardioSessions.map((c) => (
-          <Card key={c.id}>
-            <Text style={styles.title}>{c.type}</Text>
-            <Text style={styles.meta}>{c.distance} · {c.pace} · {c.duration}</Text>
-            <Text style={styles.meta}>{c.date}</Text>
-          </Card>
-        ))}
       </AppScreen>
       <FloatingActionButton />
+
+      <Modal visible={Boolean(selectedExercise)} transparent animationType="fade" onRequestClose={() => setSelectedExerciseId(null)}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <SectionHeader title={selectedExercise?.name ?? ''} subtitle={selectedExercise?.muscleGroup} />
+            <View style={styles.largeVisual}><Text style={styles.largeVisualText}>Animated Demo Placeholder</Text></View>
+            <Text style={styles.meta}>Target muscles: {selectedExercise?.targetMuscles}</Text>
+            <Text style={styles.meta}>{selectedExercise?.instructions}</Text>
+            <View style={styles.rowActions}>
+              <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]} onPress={() => setShowPrToast(true)}>
+                <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Add to Workout</Text>
+              </Pressable>
+              <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]} onPress={() => setSelectedExerciseId(null)}>
+                <Text style={styles.actionBtnText}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
-}
 
-function ActionPill({ label, onPress }: { label: string; onPress: () => void }) {
-  return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.pill, pressed && styles.pressed]}>
-      <Text style={styles.pillText}>{label}</Text>
-    </Pressable>
-  );
+  function ModeChip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+    return (
+      <Pressable onPress={onPress} style={({ pressed }) => [styles.pill, active && styles.pillActive, pressed && styles.pressed]}>
+        <Text style={styles.pillText}>{label}</Text>
+      </Pressable>
+    );
+  }
 }
-
-const styles = StyleSheet.create({
-  actions: { flexDirection: 'row', gap: 8 },
-  pill: {
-    flex: 1,
-    minHeight: 42,
-    borderRadius: tokens.radius.pill,
-    backgroundColor: '#1A2234',
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pressed: { transform: [{ scale: 0.98 }] },
-  pillText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 13 },
-  splitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  splitChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: tokens.radius.pill,
-    backgroundColor: '#1A2233',
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-  },
-  splitChipActive: { backgroundColor: '#6BFFB0', borderColor: '#6BFFB0' },
-  splitChipText: { color: tokens.colors.textSecondary, fontSize: 12 },
-  splitChipTextActive: { color: '#07110C', fontWeight: '700' },
-  createBtn: {
-    marginTop: 8,
-    minHeight: 40,
-    borderRadius: tokens.radius.pill,
-    backgroundColor: '#6BFFB0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  createText: { color: '#07110C', fontWeight: '800' },
-  helper: { color: tokens.colors.textMuted, fontSize: 12, marginTop: 6 },
-  error: { color: tokens.colors.danger, fontSize: 12, marginTop: 6 },
-  planName: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
-  title: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
-  meta: { color: tokens.colors.textSecondary, fontSize: 12 },
-});

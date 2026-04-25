@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { tokens } from '@/constants/design-tokens';
 import { SocialPost } from '@/data/mock';
+import { useAppTheme } from '@/providers/theme-provider';
 
 type FeedCardProps = {
   post: SocialPost;
@@ -11,6 +11,60 @@ type FeedCardProps = {
 export function FeedCard({ post }: FeedCardProps) {
   const [liked, setLiked] = useState(false);
   const scale = useRef(new Animated.Value(1)).current;
+  const { tokens } = useAppTheme();
+
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: tokens.colors.cardAlt,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      borderRadius: tokens.radius.lg,
+      padding: 14,
+      gap: 8,
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 5 },
+      elevation: 2,
+    },
+    pressed: { transform: [{ scale: 0.99 }], opacity: 0.95 },
+    userRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: tokens.colors.input },
+    name: { color: tokens.colors.textPrimary, fontWeight: '700' },
+    handle: { color: tokens.colors.textMuted, fontSize: 12 },
+    viewProfileBtn: {
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      borderRadius: tokens.radius.pill,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      backgroundColor: tokens.colors.input,
+    },
+    viewProfileText: { color: tokens.colors.textSecondary, fontWeight: '600', fontSize: 11 },
+    completed: { color: tokens.colors.accent, fontWeight: '700' },
+    body: { color: tokens.colors.textSecondary, lineHeight: 20 },
+    metrics: { color: tokens.colors.textPrimary, fontWeight: '600', fontSize: 13 },
+    exercises: { color: tokens.colors.textMuted, fontSize: 12 },
+    photoPlaceholder: {
+      minHeight: 140,
+      borderRadius: tokens.radius.md,
+      backgroundColor: tokens.colors.input,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    photoText: { color: tokens.colors.textMuted, fontSize: 12 },
+    actionRow: { flexDirection: 'row', gap: 10 },
+    actionBtn: {
+      backgroundColor: tokens.colors.input,
+      borderRadius: tokens.radius.pill,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+    },
+    actionText: { color: tokens.colors.textSecondary, fontWeight: '600' },
+    liked: { color: '#FF6FA4' },
+  });
 
   const onLike = () => {
     setLiked((prev) => !prev);
@@ -63,55 +117,3 @@ export function FeedCard({ post }: FeedCardProps) {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#111a27',
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-    borderRadius: tokens.radius.lg,
-    padding: 14,
-    gap: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 4,
-  },
-  pressed: { transform: [{ scale: 0.99 }], opacity: 0.95 },
-  userRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  avatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#212d42' },
-  name: { color: tokens.colors.textPrimary, fontWeight: '700' },
-  handle: { color: tokens.colors.textMuted, fontSize: 12 },
-  viewProfileBtn: {
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-    borderRadius: tokens.radius.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  viewProfileText: { color: tokens.colors.textSecondary, fontWeight: '600', fontSize: 11 },
-  completed: { color: '#8FD4FF', fontWeight: '700' },
-  body: { color: tokens.colors.textSecondary, lineHeight: 20 },
-  metrics: { color: tokens.colors.textPrimary, fontWeight: '600', fontSize: 13 },
-  exercises: { color: tokens.colors.textMuted, fontSize: 12 },
-  photoPlaceholder: {
-    minHeight: 140,
-    borderRadius: tokens.radius.md,
-    backgroundColor: '#1A2235',
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  photoText: { color: tokens.colors.textMuted, fontSize: 12 },
-  actionRow: { flexDirection: 'row', gap: 10 },
-  actionBtn: {
-    backgroundColor: '#171f30',
-    borderRadius: tokens.radius.pill,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  actionText: { color: tokens.colors.textSecondary, fontWeight: '600' },
-  liked: { color: '#FF6FA4' },
-});

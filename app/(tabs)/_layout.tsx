@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
-import { tokens } from '@/constants/design-tokens';
+import { useAppTheme } from '@/providers/theme-provider';
 
 export default function TabsLayout() {
+  const { tokens } = useAppTheme();
+
   return (
     <Tabs
       screenOptions={{
@@ -12,7 +14,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: tokens.colors.textMuted,
         sceneStyle: { backgroundColor: tokens.colors.background },
         tabBarStyle: {
-          backgroundColor: '#0D1016',
+          backgroundColor: tokens.colors.navBackground,
           borderTopColor: tokens.colors.borderSubtle,
           borderTopWidth: 1,
           height: 64,

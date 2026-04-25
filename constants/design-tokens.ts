@@ -1,4 +1,4 @@
-export const tokens = {
+export const darkTokens = {
   colors: {
     background: '#0A0B0F',
     surface: '#12141B',
@@ -13,6 +13,10 @@ export const tokens = {
     success: '#4CD09B',
     warning: '#F0B35A',
     danger: '#F06A6A',
+    card: '#101720',
+    cardAlt: '#111926',
+    input: '#1A2232',
+    navBackground: '#0D1016',
   },
   spacing: {
     xs: 6,
@@ -36,4 +40,29 @@ export const tokens = {
   },
 } as const;
 
-export type TokenSet = typeof tokens;
+export const lightTokens: typeof darkTokens = {
+  ...darkTokens,
+  colors: {
+    background: '#F4F6FB',
+    surface: '#FFFFFF',
+    surfaceElevated: '#F8FAFF',
+    border: '#D9E0EF',
+    borderSubtle: '#E4EAF5',
+    textPrimary: '#141A27',
+    textSecondary: '#42506A',
+    textMuted: '#70809E',
+    accent: '#4A63E2',
+    accentSoft: '#E5EBFF',
+    success: '#228D60',
+    warning: '#B9781A',
+    danger: '#C43B3B',
+    card: '#FFFFFF',
+    cardAlt: '#F8FAFF',
+    input: '#EEF3FC',
+    navBackground: '#FFFFFF',
+  },
+};
+
+export const tokens = darkTokens;
+
+export type TokenSet = typeof darkTokens;
