@@ -1,24 +1,65 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { tokens } from '@/constants/design-tokens';
+import { AuthProvider, useAuth } from '@/providers/auth-provider';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
+const appTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: tokens.colors.background,
+    card: tokens.colors.surface,
+    border: tokens.colors.border,
+    primary: tokens.colors.accent,
+    text: tokens.colors.textPrimary,
+  },
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function RootNavigator() {
+  const { session, loading } = useAuth();
+
+  if (loading && !session) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: tokens.colors.background }}>
+        <ActivityIndicator color={tokens.colors.accent} size="large" />
+      </View>
+    );
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
+    <Stack screenOptions={{ headerShown: false }}>
+      {session ? (
+        <>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen
+            name="start-workout"
+            options={{
+              headerShown: true,
+              title: 'Start Workout',
+              presentation: 'card',
+              headerStyle: { backgroundColor: tokens.colors.background },
+              headerTintColor: tokens.colors.textPrimary,
+            }}
+          />
+        </>
+      ) : (
+        <Stack.Screen name="(auth)" />
+      )}
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider value={appTheme}>
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
+      <StatusBar style="light" />
     </ThemeProvider>
   );
 }

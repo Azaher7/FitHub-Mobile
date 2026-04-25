@@ -1,98 +1,113 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { AthleteSuggestionCard } from '@/components/ui/athlete-suggestion-card';
+import { AppScreen } from '@/components/ui/app-screen';
+import { Card } from '@/components/ui/card';
+import { FloatingActionButton } from '@/components/ui/floating-action-button';
+import { SectionHeader } from '@/components/ui/section-header';
+import { StatCard } from '@/components/ui/stat-card';
+import { tokens } from '@/constants/design-tokens';
+import { suggestedAthletes, weeklySummary, workouts } from '@/data/mock';
 
 export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <View style={{ flex: 1 }}>
+      <AppScreen>
+        <View style={styles.hero}>
+          <Text style={styles.eyebrow}>FITNESS DASHBOARD</Text>
+          <Text style={styles.title}>Welcome back, Jordan</Text>
+          <Text style={styles.subtitle}>You are on a {weeklySummary.streak}-day streak. Keep the momentum.</Text>
+        </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <View style={styles.statsGrid}>
+          <StatCard label="Workouts this week" value={String(weeklySummary.workoutsThisWeek)} accent="#6BFFB0" />
+          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#8FD4FF" />
+          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#A998FF" />
+          <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#FFD985" />
+        </View>
+
+        <Card>
+          <SectionHeader title="Quick Actions" />
+          <View style={styles.quickActions}>
+            <QuickAction label="Start Workout" onPress={() => router.push('/start-workout')} />
+            <QuickAction label="Log Cardio" onPress={() => router.push('/(tabs)/train')} />
+          </View>
+        </Card>
+
+        <SectionHeader title="People You May Know" subtitle="Build your fitness network" />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionsRow}>
+          {suggestedAthletes.map((athlete) => (
+            <AthleteSuggestionCard key={athlete.id} athlete={athlete} />
+          ))}
+        </ScrollView>
+
+        <Card>
+          <View style={styles.inviteRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inviteTitle}>Invite a Friend</Text>
+              <Text style={styles.inviteSubtitle}>Train together, compare progress, and stay accountable.</Text>
+            </View>
+            <Pressable style={({ pressed }) => [styles.inviteBtn, pressed && styles.pressedBtn]}>
+              <Text style={styles.inviteBtnText}>Invite</Text>
+            </Pressable>
+          </View>
+        </Card>
+
+        <SectionHeader title="Recent Workouts" subtitle="Latest sessions" />
+        {workouts.map((workout) => (
+          <Card key={workout.id}>
+            <Text style={styles.workoutTitle}>{workout.title}</Text>
+            <Text style={styles.meta}>{workout.focus}</Text>
+            <Text style={styles.meta}>{workout.date} · {workout.duration} · {workout.volume}</Text>
+          </Card>
+        ))}
+      </AppScreen>
+      <FloatingActionButton />
+    </View>
+  );
+}
+
+function QuickAction({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.actionBtn, pressed && styles.pressedBtn]}>
+      <Text style={styles.actionText}>{label}</Text>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  hero: { gap: 6, marginBottom: 4 },
+  eyebrow: { color: tokens.colors.textMuted, fontSize: 11, letterSpacing: 1.2, fontWeight: '700' },
+  title: { color: tokens.colors.textPrimary, fontSize: 30, fontWeight: '800', lineHeight: 36 },
+  subtitle: { color: tokens.colors.textSecondary, fontSize: 14, lineHeight: 19 },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  quickActions: { flexDirection: 'row', gap: 8 },
+  suggestionsRow: { gap: 10, paddingRight: 8 },
+  actionBtn: {
+    flex: 1,
+    minHeight: 42,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: '#1A2234',
+    borderWidth: 1,
+    borderColor: tokens.colors.borderSubtle,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  pressedBtn: { transform: [{ scale: 0.98 }] },
+  actionText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 13 },
+  inviteRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  inviteTitle: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 16 },
+  inviteSubtitle: { color: tokens.colors.textSecondary, fontSize: 12, marginTop: 4 },
+  inviteBtn: {
+    minHeight: 36,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: '#6BFFB0',
+    paddingHorizontal: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+  inviteBtnText: { color: '#07110C', fontWeight: '800', fontSize: 12 },
+  workoutTitle: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
+  meta: { color: tokens.colors.textSecondary, fontSize: 12 },
 });
