@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '@/components/ui/app-screen';
@@ -6,9 +7,60 @@ import { Card } from '@/components/ui/card';
 import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { SectionHeader } from '@/components/ui/section-header';
 import { tokens } from '@/constants/design-tokens';
-import { cardioSessions, workoutPlans, workouts } from '@/data/mock';
+import { cardioSessions, workoutPlans as mockWorkoutPlans, workouts } from '@/data/mock';
+import { WorkoutPlanRow, createWorkoutPlan, fetchWorkoutPlans } from '@/lib/supabase-rest';
+import { useAuth } from '@/providers/auth-provider';
+
+const splitOptions = ['Upper / Lower', 'Push Pull Legs', 'Arnold Split'] as const;
 
 export default function TrainScreen() {
+  const { session } = useAuth();
+  const [plans, setPlans] = useState<WorkoutPlanRow[]>([]);
+  const [selectedSplit, setSelectedSplit] = useState<string>(splitOptions[0]);
+  const [planLoading, setPlanLoading] = useState(true);
+  const [planError, setPlanError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!session) return;
+
+      setPlanLoading(true);
+      setPlanError(null);
+      try {
+        const rows = await fetchWorkoutPlans(session.access_token, session.user.id);
+        setPlans(rows);
+      } catch (err) {
+        setPlanError(err instanceof Error ? err.message : 'Unable to load workout plans');
+      } finally {
+        setPlanLoading(false);
+      }
+    };
+
+    load();
+  }, [session]);
+
+  const planList = useMemo(() => {
+    if (plans.length > 0) return plans;
+    return mockWorkoutPlans.map((plan) => ({ id: plan.id, name: plan.name, split: plan.name }));
+  }, [plans]);
+
+  const onCreatePlan = async () => {
+    if (!session) return;
+
+    try {
+      setPlanError(null);
+      const created = await createWorkoutPlan(session.access_token, {
+        user_id: session.user.id,
+        name: `${selectedSplit} Plan`,
+        split: selectedSplit,
+      });
+
+      setPlans((prev) => [created, ...prev]);
+    } catch (err) {
+      setPlanError(err instanceof Error ? err.message : 'Unable to create plan');
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <AppScreen>
@@ -22,27 +74,27 @@ export default function TrainScreen() {
         <Card>
           <SectionHeader title="Create New Plan" subtitle="Name your split" />
           <View style={styles.splitRow}>
-            <SplitChip label="Upper / Lower" />
-            <SplitChip label="Push Pull Legs" />
-            <SplitChip label="Arnold Split" />
+            {splitOptions.map((split) => (
+              <Pressable
+                key={split}
+                onPress={() => setSelectedSplit(split)}
+                style={[styles.splitChip, selectedSplit === split && styles.splitChipActive]}>
+                <Text style={[styles.splitChipText, selectedSplit === split && styles.splitChipTextActive]}>{split}</Text>
+              </Pressable>
+            ))}
           </View>
-          <Pressable style={({ pressed }) => [styles.createBtn, pressed && styles.pressed]}>
+          <Pressable onPress={onCreatePlan} style={({ pressed }) => [styles.createBtn, pressed && styles.pressed]}>
             <Text style={styles.createText}>+ Create Plan</Text>
           </Pressable>
+          {planLoading ? <Text style={styles.helper}>Loading plans...</Text> : null}
+          {planError ? <Text style={styles.error}>{planError}</Text> : null}
         </Card>
 
         <SectionHeader title="Workout Plans" />
-        {workoutPlans.map((plan) => (
+        {planList.map((plan) => (
           <Card key={plan.id}>
             <Text style={styles.planName}>{plan.name}</Text>
-            {plan.workouts.map((workout) => (
-              <View key={workout.id} style={styles.workoutBlock}>
-                <Text style={styles.workoutName}>{workout.name}</Text>
-                {workout.exercises.map((exercise) => (
-                  <Text key={exercise} style={styles.exerciseRow}>• {exercise}</Text>
-                ))}
-              </View>
-            ))}
+            <Text style={styles.helper}>{plan.split ?? 'Split not set'}</Text>
           </Card>
         ))}
 
@@ -77,14 +129,6 @@ function ActionPill({ label, onPress }: { label: string; onPress: () => void }) 
   );
 }
 
-function SplitChip({ label }: { label: string }) {
-  return (
-    <View style={styles.splitChip}>
-      <Text style={styles.splitChipText}>{label}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   actions: { flexDirection: 'row', gap: 8 },
   pill: {
@@ -108,7 +152,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: tokens.colors.borderSubtle,
   },
+  splitChipActive: { backgroundColor: '#6BFFB0', borderColor: '#6BFFB0' },
   splitChipText: { color: tokens.colors.textSecondary, fontSize: 12 },
+  splitChipTextActive: { color: '#07110C', fontWeight: '700' },
   createBtn: {
     marginTop: 8,
     minHeight: 40,
@@ -118,16 +164,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   createText: { color: '#07110C', fontWeight: '800' },
+  helper: { color: tokens.colors.textMuted, fontSize: 12, marginTop: 6 },
+  error: { color: tokens.colors.danger, fontSize: 12, marginTop: 6 },
   planName: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
-  workoutBlock: {
-    marginTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: tokens.colors.borderSubtle,
-    paddingTop: 8,
-    gap: 4,
-  },
-  workoutName: { color: '#8FD4FF', fontWeight: '700' },
-  exerciseRow: { color: tokens.colors.textSecondary, fontSize: 12 },
   title: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
   meta: { color: tokens.colors.textSecondary, fontSize: 12 },
 });
