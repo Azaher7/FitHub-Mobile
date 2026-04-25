@@ -81,7 +81,7 @@ export default function ProfileScreen() {
 
         <View style={styles.statsGrid}>
           <StatCard label="Workouts" value="124" accent="#6BFFB0" />
-          <StatCard label="Followers" value="0" accent="#8FD4FF" />
+          <StatCard label="Followers" value="0" accent="#72D9B0" />
         </View>
 
         <Card>

@@ -1,23 +1,31 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppScreen } from '@/components/ui/app-screen';
 import { Card } from '@/components/ui/card';
 import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { SectionHeader } from '@/components/ui/section-header';
-import { cardioSessions, exerciseLibrary, mockPr, workouts } from '@/data/mock';
+import { cardioSessions, exerciseLibrary, mockPr, workoutPlans as mockWorkoutPlans, workouts } from '@/data/mock';
+import { createWorkoutPlan, fetchWorkoutPlans, WorkoutPlanRow } from '@/lib/supabase-rest';
+import { useAuth } from '@/providers/auth-provider';
 import { useAppTheme } from '@/providers/theme-provider';
 
 type TrainMode = 'exercise-library' | 'cardio';
 type CardioMode = 'timed' | 'gps';
+const splitOptions = ['Upper / Lower', 'Push Pull Legs', 'Arnold Split'] as const;
 
 export default function TrainScreen() {
   const { tokens } = useAppTheme();
+  const { session } = useAuth();
   const [trainMode, setTrainMode] = useState<TrainMode>('exercise-library');
   const [cardioMode, setCardioMode] = useState<CardioMode>('timed');
   const [isGpsLive, setIsGpsLive] = useState(false);
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
   const [showPrToast, setShowPrToast] = useState(false);
+  const [plans, setPlans] = useState<WorkoutPlanRow[]>([]);
+  const [planLoading, setPlanLoading] = useState(false);
+  const [planError, setPlanError] = useState<string | null>(null);
+  const [selectedSplit, setSelectedSplit] = useState<string>(splitOptions[0]);
 
   const [customName, setCustomName] = useState('');
   const [customMuscleGroup, setCustomMuscleGroup] = useState('');
@@ -27,6 +35,49 @@ export default function TrainScreen() {
     () => exerciseLibrary.find((exercise) => exercise.id === selectedExerciseId) ?? null,
     [selectedExerciseId],
   );
+
+  useEffect(() => {
+    const loadPlans = async () => {
+      if (!session) return;
+
+      setPlanLoading(true);
+      setPlanError(null);
+      try {
+        const rows = await fetchWorkoutPlans(session.access_token, session.user.id);
+        setPlans(rows);
+      } catch (err) {
+        setPlanError(err instanceof Error ? err.message : 'Unable to load plans');
+      } finally {
+        setPlanLoading(false);
+      }
+    };
+
+    loadPlans();
+  }, [session]);
+
+  const onCreatePlan = async () => {
+    if (!session) {
+      setPlanError('Log in to sync workout plans with Supabase.');
+      return;
+    }
+
+    setPlanLoading(true);
+    setPlanError(null);
+    try {
+      const created = await createWorkoutPlan(session.access_token, {
+        user_id: session.user.id,
+        name: `${selectedSplit} Plan`,
+        split: selectedSplit,
+      });
+      setPlans((prev) => [created, ...prev]);
+    } catch (err) {
+      setPlanError(err instanceof Error ? err.message : 'Unable to create plan');
+    } finally {
+      setPlanLoading(false);
+    }
+  };
+
+  const mergedPlans = plans.length > 0 ? plans : mockWorkoutPlans.map((p) => ({ id: p.id, name: p.name, split: p.name }));
 
   const styles = StyleSheet.create({
     actions: { flexDirection: 'row', gap: 8 },
@@ -69,7 +120,7 @@ export default function TrainScreen() {
     },
     actionPrimary: { backgroundColor: tokens.colors.accent, borderColor: tokens.colors.accent },
     actionBtnText: { color: tokens.colors.textSecondary, fontWeight: '700', fontSize: 12 },
-    actionPrimaryText: { color: '#FFFFFF' },
+    actionPrimaryText: { color: '#062016' },
     input: {
       minHeight: 42,
       borderRadius: tokens.radius.md,
@@ -131,12 +182,53 @@ export default function TrainScreen() {
     },
     prLabel: { color: tokens.colors.accent, fontWeight: '800', fontSize: 12 },
     prText: { color: tokens.colors.textPrimary, fontSize: 14, fontWeight: '700' },
+    splitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    splitChip: {
+      borderRadius: tokens.radius.pill,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      backgroundColor: tokens.colors.input,
+    },
+    splitChipActive: {
+      borderColor: tokens.colors.accent,
+      backgroundColor: tokens.colors.accentSoft,
+    },
+    splitChipText: { color: tokens.colors.textSecondary, fontSize: 12, fontWeight: '600' },
+    splitChipTextActive: { color: tokens.colors.accent, fontWeight: '800' },
+    error: { color: tokens.colors.danger, fontSize: 12, marginTop: 6 },
   });
 
   return (
     <View style={{ flex: 1 }}>
       <AppScreen>
         <SectionHeader title="Train" subtitle="Exercise library, cardio flow, and PR moments" />
+
+        <Card>
+          <SectionHeader title="Workout Plans" subtitle="Supabase-backed Phase 2 foundation" />
+          <View style={styles.splitRow}>
+            {splitOptions.map((split) => (
+              <Pressable
+                key={split}
+                onPress={() => setSelectedSplit(split)}
+                style={({ pressed }) => [styles.splitChip, selectedSplit === split && styles.splitChipActive, pressed && styles.pressed]}>
+                <Text style={[styles.splitChipText, selectedSplit === split && styles.splitChipTextActive]}>{split}</Text>
+              </Pressable>
+            ))}
+          </View>
+          <Pressable onPress={onCreatePlan} style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]}>
+            <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>{planLoading ? 'Saving...' : 'Create Plan'}</Text>
+          </Pressable>
+          {planLoading ? <Text style={styles.helper}>Syncing plans...</Text> : null}
+          {planError ? <Text style={styles.error}>{planError}</Text> : null}
+          {mergedPlans.map((plan) => (
+            <View key={plan.id}>
+              <Text style={styles.title}>{plan.name}</Text>
+              <Text style={styles.meta}>{plan.split ?? 'No split set'}</Text>
+            </View>
+          ))}
+        </Card>
 
         <View style={styles.actions}>
           <ModeChip label="Exercise Library" active={trainMode === 'exercise-library'} onPress={() => setTrainMode('exercise-library')} />

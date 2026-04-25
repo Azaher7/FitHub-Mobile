@@ -37,7 +37,7 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
       fontWeight: '600',
     },
     primaryLabel: {
-      color: '#FFFFFF',
+      color: '#062016',
     },
     secondaryLabel: {
       color: tokens.colors.textPrimary,

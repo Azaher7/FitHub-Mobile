@@ -70,8 +70,8 @@ export default function HomeScreen() {
 
         <View style={styles.statsGrid}>
           <StatCard label="Workouts this week" value={String(weeklySummary.workoutsThisWeek)} accent="#6BFFB0" />
-          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#8FD4FF" />
-          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#A998FF" />
+          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#72D9B0" />
+          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#9CE3C4" />
           <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#FFD985" />
         </View>
 
@@ -98,7 +98,7 @@ export default function HomeScreen() {
               <Text style={styles.inviteSubtitle}>Train together, compare progress, and stay accountable.</Text>
             </View>
             <Pressable style={({ pressed }) => [styles.inviteBtn, pressed && styles.pressedBtn]}>
-              <Text style={styles.inviteBtnText}>Send Invite</Text>
+              <Text style={styles.inviteBtnText}>Invite</Text>
             </Pressable>
           </View>
         </Card>
