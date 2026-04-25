@@ -1,9 +1,13 @@
 import { PropsWithChildren } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { useAppTheme } from '@/providers/theme-provider';
 
-export function Card({ children }: PropsWithChildren) {
+type CardProps = PropsWithChildren<{
+  style?: StyleProp<ViewStyle>;
+}>;
+
+export function Card({ children, style }: CardProps) {
   const { tokens } = useAppTheme();
 
   const styles = StyleSheet.create({
@@ -22,5 +26,5 @@ export function Card({ children }: PropsWithChildren) {
     },
   });
 
-  return <View style={styles.card}>{children}</View>;
+  return <View style={[styles.card, style]}>{children}</View>;
 }

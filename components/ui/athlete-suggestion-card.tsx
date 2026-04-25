@@ -21,7 +21,7 @@ export function AthleteSuggestionCard({ athlete }: AthleteSuggestionCardProps) {
       gap: 12,
     },
     profileRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-    avatar: { width: 52, height: 52, borderRadius: 26, backgroundColor: tokens.colors.input },
+    avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: tokens.colors.input },
     name: { color: tokens.colors.textPrimary, fontSize: 15, fontWeight: '700' },
     subtitle: { color: tokens.colors.textSecondary, fontSize: 12, marginTop: 2 },
     actions: { flexDirection: 'row', gap: 8 },
