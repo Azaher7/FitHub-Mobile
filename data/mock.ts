@@ -47,6 +47,14 @@ export type SocialPost = {
   timeAgo: string;
 };
 
+export type ExerciseItem = {
+  id: string;
+  name: string;
+  muscleGroup: string;
+  targetMuscles: string;
+  instructions: string;
+};
+
 export const weeklySummary = {
   workoutsThisWeek: 4,
   totalWorkouts: 124,
@@ -143,3 +151,32 @@ export const socialFeed: SocialPost[] = [
     timeAgo: '3h',
   },
 ];
+
+export const exerciseLibrary: ExerciseItem[] = [
+  {
+    id: 'e1',
+    name: 'Barbell Back Squat',
+    muscleGroup: 'Legs',
+    targetMuscles: 'Quads, glutes, core',
+    instructions: 'Brace your core, keep chest tall, and drive through mid-foot on the way up.',
+  },
+  {
+    id: 'e2',
+    name: 'Incline Dumbbell Press',
+    muscleGroup: 'Chest',
+    targetMuscles: 'Upper chest, front delts, triceps',
+    instructions: 'Keep shoulder blades pinned and lower slowly before pressing upward.',
+  },
+  {
+    id: 'e3',
+    name: 'Lat Pulldown',
+    muscleGroup: 'Back',
+    targetMuscles: 'Lats, upper back, biceps',
+    instructions: 'Pull elbows to your ribs and avoid leaning too far backward.',
+  },
+];
+
+export const mockPr = {
+  exercise: 'Bench Press',
+  result: '225 lb × 5',
+};

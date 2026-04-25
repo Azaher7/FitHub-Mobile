@@ -5,11 +5,32 @@ import { Card } from '@/components/ui/card';
 import { FeedCard } from '@/components/ui/feed-card';
 import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { SectionHeader } from '@/components/ui/section-header';
-import { tokens } from '@/constants/design-tokens';
 import { socialFeed } from '@/data/mock';
+import { useAppTheme } from '@/providers/theme-provider';
 
 export default function SocialScreen() {
   const hasPosts = socialFeed.length > 0;
+  const { tokens } = useAppTheme();
+
+  const styles = StyleSheet.create({
+    filterRow: { flexDirection: 'row', gap: 8 },
+    chip: {
+      borderRadius: tokens.radius.pill,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      backgroundColor: tokens.colors.input,
+    },
+    chipActive: {
+      backgroundColor: tokens.colors.accentSoft,
+      borderColor: tokens.colors.accent,
+    },
+    chipText: { color: tokens.colors.textSecondary, fontSize: 12, fontWeight: '600' },
+    chipTextActive: { color: tokens.colors.accent, fontWeight: '800' },
+    emptyTitle: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 16 },
+    emptyText: { color: tokens.colors.textSecondary, fontSize: 13 },
+  });
 
   return (
     <View style={{ flex: 1 }}>
@@ -34,32 +55,12 @@ export default function SocialScreen() {
       <FloatingActionButton />
     </View>
   );
-}
 
-function Chip({ label, active = false }: { label: string; active?: boolean }) {
-  return (
-    <View style={[styles.chip, active && styles.chipActive]}>
-      <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
-    </View>
-  );
+  function Chip({ label, active = false }: { label: string; active?: boolean }) {
+    return (
+      <View style={[styles.chip, active && styles.chipActive]}>
+        <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
+      </View>
+    );
+  }
 }
-
-const styles = StyleSheet.create({
-  filterRow: { flexDirection: 'row', gap: 8 },
-  chip: {
-    borderRadius: tokens.radius.pill,
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#161e2d',
-  },
-  chipActive: {
-    backgroundColor: '#6BFFB0',
-    borderColor: '#6BFFB0',
-  },
-  chipText: { color: tokens.colors.textSecondary, fontSize: 12, fontWeight: '600' },
-  chipTextActive: { color: '#07110C', fontWeight: '800' },
-  emptyTitle: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 16 },
-  emptyText: { color: tokens.colors.textSecondary, fontSize: 13 },
-});

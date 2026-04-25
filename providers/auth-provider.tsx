@@ -1,5 +1,6 @@
-import { createContext, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { clearStoredSession, loadStoredSession, saveStoredSession } from '@/lib/session-storage';
 import {
   AuthSession,
   ProfileRow,
@@ -27,6 +28,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [loading, setLoading] = useState(false);
+  const [booting, setBooting] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const ensureProfile = useCallback(async (currentSession: AuthSession) => {
@@ -36,6 +38,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       id: currentSession.user.id,
       username: fallbackName,
       full_name: fallbackName,
+      first_name: fallbackName.split(' ')[0] ?? fallbackName,
       avatar_url: null,
     });
 
@@ -43,12 +46,31 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setProfile(row);
   }, []);
 
+  useEffect(() => {
+    const hydrate = async () => {
+      setBooting(true);
+      try {
+        const restored = await loadStoredSession();
+        if (!restored) return;
+        setSession(restored);
+        await ensureProfile(restored);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unable to restore session');
+      } finally {
+        setBooting(false);
+      }
+    };
+
+    hydrate();
+  }, [ensureProfile]);
+
   const signIn = useCallback(async (email: string, password: string) => {
     setLoading(true);
     setError(null);
     try {
       const nextSession = await signInWithPassword(email, password);
       setSession(nextSession);
+      await saveStoredSession(nextSession);
       await ensureProfile(nextSession);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to sign in');
@@ -68,6 +90,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
 
       setSession(result.session);
+      await saveStoredSession(result.session);
       await ensureProfile(result.session);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to sign up');
@@ -81,6 +104,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     if (!session?.access_token) {
       setSession(null);
       setProfile(null);
+      await clearStoredSession();
       return;
     }
 
@@ -91,6 +115,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to sign out cleanly');
     } finally {
+      await clearStoredSession();
       setSession(null);
       setProfile(null);
       setLoading(false);
@@ -113,8 +138,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, [session]);
 
   const value = useMemo(
-    () => ({ session, profile, loading, error, signIn, signUp, signOut, refreshProfile }),
-    [error, loading, profile, refreshProfile, session, signIn, signOut, signUp],
+    () => ({ session, profile, loading: loading || booting, error, signIn, signUp, signOut, refreshProfile }),
+    [booting, error, loading, profile, refreshProfile, session, signIn, signOut, signUp],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

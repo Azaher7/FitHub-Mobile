@@ -1,13 +1,55 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { tokens } from '@/constants/design-tokens';
 import { AthleteSuggestion } from '@/data/mock';
+import { useAppTheme } from '@/providers/theme-provider';
 
 type AthleteSuggestionCardProps = {
   athlete: AthleteSuggestion;
 };
 
 export function AthleteSuggestionCard({ athlete }: AthleteSuggestionCardProps) {
+  const { tokens } = useAppTheme();
+
+  const styles = StyleSheet.create({
+    card: {
+      minWidth: 236,
+      borderRadius: tokens.radius.lg,
+      backgroundColor: tokens.colors.cardAlt,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      padding: 14,
+      gap: 12,
+    },
+    profileRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: tokens.colors.input },
+    name: { color: tokens.colors.textPrimary, fontSize: 15, fontWeight: '700' },
+    subtitle: { color: tokens.colors.textSecondary, fontSize: 12, marginTop: 2 },
+    actions: { flexDirection: 'row', gap: 8 },
+    followBtn: {
+      flex: 1,
+      minHeight: 34,
+      borderRadius: tokens.radius.pill,
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: tokens.colors.accent,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    followText: { color: tokens.colors.accent, fontWeight: '800', fontSize: 12 },
+    viewBtn: {
+      flex: 1,
+      minHeight: 34,
+      borderRadius: tokens.radius.pill,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: tokens.colors.input,
+    },
+    viewText: { color: tokens.colors.textPrimary, fontWeight: '600', fontSize: 12 },
+    pressed: { transform: [{ scale: 0.98 }] },
+  });
+
   return (
     <View style={styles.card}>
       <View style={styles.profileRow}>
@@ -29,41 +71,3 @@ export function AthleteSuggestionCard({ athlete }: AthleteSuggestionCardProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    minWidth: 220,
-    borderRadius: tokens.radius.lg,
-    backgroundColor: '#111926',
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-    padding: 12,
-    gap: 10,
-  },
-  profileRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#273041' },
-  name: { color: tokens.colors.textPrimary, fontSize: 15, fontWeight: '700' },
-  subtitle: { color: tokens.colors.textSecondary, fontSize: 12 },
-  actions: { flexDirection: 'row', gap: 8 },
-  followBtn: {
-    flex: 1,
-    minHeight: 34,
-    borderRadius: tokens.radius.pill,
-    backgroundColor: '#6BFFB0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  followText: { color: '#07110C', fontWeight: '800', fontSize: 12 },
-  viewBtn: {
-    flex: 1,
-    minHeight: 34,
-    borderRadius: tokens.radius.pill,
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#1A2232',
-  },
-  viewText: { color: tokens.colors.textPrimary, fontWeight: '600', fontSize: 12 },
-  pressed: { transform: [{ scale: 0.98 }] },
-});

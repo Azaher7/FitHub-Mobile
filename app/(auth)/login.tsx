@@ -5,14 +5,38 @@ import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-nati
 import { AppButton } from '@/components/ui/app-button';
 import { AppScreen } from '@/components/ui/app-screen';
 import { Card } from '@/components/ui/card';
-import { tokens } from '@/constants/design-tokens';
 import { useAuth } from '@/providers/auth-provider';
+import { useAppTheme } from '@/providers/theme-provider';
 
 export default function LoginScreen() {
   const { signIn, loading, error } = useAuth();
+  const { tokens } = useAppTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
+
+  const styles = StyleSheet.create({
+    wrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      gap: 12,
+    },
+    title: { color: tokens.colors.textPrimary, fontSize: 34, fontWeight: '800' },
+    subtitle: { color: tokens.colors.textSecondary, marginBottom: 4 },
+    label: { color: tokens.colors.textSecondary, fontSize: 13, fontWeight: '600' },
+    input: {
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      backgroundColor: tokens.colors.input,
+      borderRadius: tokens.radius.md,
+      color: tokens.colors.textPrimary,
+      minHeight: 42,
+      paddingHorizontal: 12,
+      marginBottom: 8,
+    },
+    error: { color: tokens.colors.danger, fontSize: 12 },
+    link: { color: tokens.colors.accent, fontWeight: '600', textAlign: 'center', marginTop: 4 },
+  });
 
   const onSubmit = async () => {
     setLocalError(null);
@@ -68,26 +92,3 @@ export default function LoginScreen() {
     </AppScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: 12,
-  },
-  title: { color: tokens.colors.textPrimary, fontSize: 34, fontWeight: '800' },
-  subtitle: { color: tokens.colors.textSecondary, marginBottom: 4 },
-  label: { color: tokens.colors.textSecondary, fontSize: 13, fontWeight: '600' },
-  input: {
-    borderWidth: 1,
-    borderColor: tokens.colors.borderSubtle,
-    backgroundColor: '#151B27',
-    borderRadius: tokens.radius.md,
-    color: tokens.colors.textPrimary,
-    minHeight: 42,
-    paddingHorizontal: 12,
-    marginBottom: 8,
-  },
-  error: { color: tokens.colors.danger, fontSize: 12 },
-  link: { color: '#8FD4FF', fontWeight: '600', textAlign: 'center', marginTop: 4 },
-});

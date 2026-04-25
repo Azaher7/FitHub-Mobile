@@ -2,9 +2,41 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { tokens } from '@/constants/design-tokens';
+import { useAppTheme } from '@/providers/theme-provider';
 
 export function FloatingActionButton() {
+  const { tokens } = useAppTheme();
+
+  const styles = StyleSheet.create({
+    wrapper: {
+      position: 'absolute',
+      right: 18,
+      bottom: 18,
+    },
+    button: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      height: 46,
+      borderRadius: tokens.radius.pill,
+      backgroundColor: tokens.colors.success,
+      paddingHorizontal: 14,
+      shadowColor: tokens.colors.success,
+      shadowOpacity: 0.22,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 6,
+    },
+    pressed: {
+      transform: [{ scale: 0.97 }],
+    },
+    label: {
+      color: '#07110C',
+      fontWeight: '800',
+      fontSize: 13,
+    },
+  });
+
   return (
     <View pointerEvents="box-none" style={styles.wrapper}>
       <Pressable
@@ -16,33 +48,3 @@ export function FloatingActionButton() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    right: 18,
-    bottom: 18,
-  },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    height: 46,
-    borderRadius: tokens.radius.pill,
-    backgroundColor: '#6BFFB0',
-    paddingHorizontal: 14,
-    shadowColor: '#6BFFB0',
-    shadowOpacity: 0.28,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
-  },
-  pressed: {
-    transform: [{ scale: 0.97 }],
-  },
-  label: {
-    color: '#07110C',
-    fontWeight: '800',
-    fontSize: 13,
-  },
-});
