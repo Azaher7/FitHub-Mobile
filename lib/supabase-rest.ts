@@ -28,6 +28,7 @@ export type ProfileRow = {
   id: string;
   username: string | null;
   full_name: string | null;
+  first_name: string | null;
   avatar_url: string | null;
 };
 
@@ -99,7 +100,7 @@ export async function fetchProfile(accessToken: string, userId: string) {
     path: '/rest/v1/profiles',
     accessToken,
     query: {
-      select: 'id,username,full_name,avatar_url',
+      select: 'id,username,full_name,first_name,avatar_url',
       id: `eq.${userId}`,
       limit: '1',
     },

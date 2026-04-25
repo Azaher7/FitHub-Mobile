@@ -38,6 +38,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       id: currentSession.user.id,
       username: fallbackName,
       full_name: fallbackName,
+      first_name: fallbackName.split(' ')[0] ?? fallbackName,
       avatar_url: null,
     });
 

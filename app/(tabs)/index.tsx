@@ -8,15 +8,19 @@ import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { SectionHeader } from '@/components/ui/section-header';
 import { StatCard } from '@/components/ui/stat-card';
 import { suggestedAthletes, weeklySummary, workouts } from '@/data/mock';
+import { useAuth } from '@/providers/auth-provider';
 import { useAppTheme } from '@/providers/theme-provider';
 
 export default function HomeScreen() {
   const { tokens } = useAppTheme();
+  const { profile } = useAuth();
   const lastWorkout = workouts[0];
+  const firstName = profile?.first_name?.trim();
+  const welcomeText = firstName ? `Welcome back, ${firstName}` : 'Welcome back';
 
   const styles = StyleSheet.create({
     hero: { gap: 4 },
-    eyebrow: { color: tokens.colors.textMuted, fontSize: 11, letterSpacing: 1.1, fontWeight: '700' },
+    eyebrow: { color: tokens.colors.textSecondary, fontSize: 16, fontWeight: '700' },
     title: { color: tokens.colors.textPrimary, fontSize: 28, fontWeight: '800', lineHeight: 34 },
     subtitle: { color: tokens.colors.textSecondary, fontSize: 13, lineHeight: 18 },
     streakPill: {
@@ -84,7 +88,7 @@ export default function HomeScreen() {
     <View style={{ flex: 1 }}>
       <AppScreen>
         <View style={styles.hero}>
-          <Text style={styles.eyebrow}>WELCOME BACK</Text>
+          <Text style={styles.eyebrow}>{welcomeText}</Text>
           <Text style={styles.title}>Ready for today&apos;s training?</Text>
           <Text style={styles.subtitle}>Let&apos;s keep your momentum and build on last session.</Text>
           <View style={styles.streakPill}><Text style={styles.streakText}>{weeklySummary.streak}-day streak</Text></View>
