@@ -14,7 +14,13 @@ export default function SocialScreen() {
   return (
     <View style={{ flex: 1 }}>
       <AppScreen>
-        <SectionHeader title="Fitness Feed" subtitle="See how your crew is training" />
+        <SectionHeader title="Fitness Feed" subtitle="Workout and photo updates from athletes" />
+
+        <View style={styles.filterRow}>
+          <Chip label="All" active />
+          <Chip label="Workouts" />
+          <Chip label="Photos" />
+        </View>
 
         {hasPosts ? (
           socialFeed.map((post) => <FeedCard key={post.id} post={post} />)
@@ -30,7 +36,30 @@ export default function SocialScreen() {
   );
 }
 
+function Chip({ label, active = false }: { label: string; active?: boolean }) {
+  return (
+    <View style={[styles.chip, active && styles.chipActive]}>
+      <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  filterRow: { flexDirection: 'row', gap: 8 },
+  chip: {
+    borderRadius: tokens.radius.pill,
+    borderWidth: 1,
+    borderColor: tokens.colors.borderSubtle,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#161e2d',
+  },
+  chipActive: {
+    backgroundColor: '#6BFFB0',
+    borderColor: '#6BFFB0',
+  },
+  chipText: { color: tokens.colors.textSecondary, fontSize: 12, fontWeight: '600' },
+  chipTextActive: { color: '#07110C', fontWeight: '800' },
   emptyTitle: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 16 },
   emptyText: { color: tokens.colors.textSecondary, fontSize: 13 },
 });

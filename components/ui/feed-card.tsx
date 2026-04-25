@@ -28,12 +28,26 @@ export function FeedCard({ post }: FeedCardProps) {
           <Text style={styles.name}>{post.user}</Text>
           <Text style={styles.handle}>{post.handle} · {post.timeAgo}</Text>
         </View>
+        <Pressable style={styles.viewProfileBtn}>
+          <Text style={styles.viewProfileText}>View</Text>
+        </Pressable>
       </View>
 
-      <Text style={styles.completed}>Completed {post.workout}</Text>
-      <Text style={styles.body}>{post.text}</Text>
-      <Text style={styles.metrics}>{post.duration} · {post.volume}</Text>
-      <Text style={styles.exercises}>Exercises: {post.exercises}</Text>
+      {post.type === 'photo' ? (
+        <>
+          <View style={styles.photoPlaceholder}>
+            <Text style={styles.photoText}>Photo Post Placeholder</Text>
+          </View>
+          <Text style={styles.body}>{post.text}</Text>
+        </>
+      ) : (
+        <>
+          <Text style={styles.completed}>Completed {post.workout}</Text>
+          <Text style={styles.body}>{post.text}</Text>
+          <Text style={styles.metrics}>{post.duration} · {post.volume}</Text>
+          <Text style={styles.exercises}>Exercises: {post.exercises}</Text>
+        </>
+      )}
 
       <View style={styles.actionRow}>
         <Pressable onPress={onLike} style={styles.actionBtn}>
@@ -42,6 +56,9 @@ export function FeedCard({ post }: FeedCardProps) {
         <Pressable style={styles.actionBtn}>
           <Text style={styles.actionText}>💬 {post.comments}</Text>
         </Pressable>
+        <Pressable style={styles.actionBtn}>
+          <Text style={styles.actionText}>↗ Share</Text>
+        </Pressable>
       </View>
     </Pressable>
   );
@@ -49,7 +66,7 @@ export function FeedCard({ post }: FeedCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#121722',
+    backgroundColor: '#111a27',
     borderWidth: 1,
     borderColor: tokens.colors.borderSubtle,
     borderRadius: tokens.radius.lg,
@@ -63,16 +80,34 @@ const styles = StyleSheet.create({
   },
   pressed: { transform: [{ scale: 0.99 }], opacity: 0.95 },
   userRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  avatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#212838' },
+  avatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#212d42' },
   name: { color: tokens.colors.textPrimary, fontWeight: '700' },
   handle: { color: tokens.colors.textMuted, fontSize: 12 },
+  viewProfileBtn: {
+    borderWidth: 1,
+    borderColor: tokens.colors.borderSubtle,
+    borderRadius: tokens.radius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  viewProfileText: { color: tokens.colors.textSecondary, fontWeight: '600', fontSize: 11 },
   completed: { color: '#8FD4FF', fontWeight: '700' },
   body: { color: tokens.colors.textSecondary, lineHeight: 20 },
   metrics: { color: tokens.colors.textPrimary, fontWeight: '600', fontSize: 13 },
   exercises: { color: tokens.colors.textMuted, fontSize: 12 },
+  photoPlaceholder: {
+    minHeight: 140,
+    borderRadius: tokens.radius.md,
+    backgroundColor: '#1A2235',
+    borderWidth: 1,
+    borderColor: tokens.colors.borderSubtle,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  photoText: { color: tokens.colors.textMuted, fontSize: 12 },
   actionRow: { flexDirection: 'row', gap: 10 },
   actionBtn: {
-    backgroundColor: '#171D2A',
+    backgroundColor: '#171f30',
     borderRadius: tokens.radius.pill,
     paddingHorizontal: 12,
     paddingVertical: 6,

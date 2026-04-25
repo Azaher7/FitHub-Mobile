@@ -16,15 +16,32 @@ export type CardioEntry = {
   date: string;
 };
 
+export type AthleteSuggestion = {
+  id: string;
+  name: string;
+  subtitle: string;
+};
+
+export type WorkoutPlan = {
+  id: string;
+  name: string;
+  workouts: {
+    id: string;
+    name: string;
+    exercises: string[];
+  }[];
+};
+
 export type SocialPost = {
   id: string;
   user: string;
   handle: string;
+  type: 'workout' | 'photo';
   text: string;
-  workout: string;
-  exercises: string;
-  duration: string;
-  volume: string;
+  workout?: string;
+  exercises?: string;
+  duration?: string;
+  volume?: string;
   likes: number;
   comments: number;
   timeAgo: string;
@@ -36,6 +53,12 @@ export const weeklySummary = {
   totalMinutes: 282,
   streak: 6,
 };
+
+export const suggestedAthletes: AthleteSuggestion[] = [
+  { id: 'a1', name: 'Maya Rivera', subtitle: 'Strength training · 4 mutuals' },
+  { id: 'a2', name: 'Chris Nolan', subtitle: 'Hybrid training · 3 mutuals' },
+  { id: 'a3', name: 'Noah Kim', subtitle: 'Powerlifting · 2 mutuals' },
+];
 
 export const workouts: WorkoutEntry[] = [
   {
@@ -75,11 +98,31 @@ export const cardioSessions: CardioEntry[] = [
   },
 ];
 
+export const workoutPlans: WorkoutPlan[] = [
+  {
+    id: 'p1',
+    name: 'Push Pull Legs',
+    workouts: [
+      { id: 'pw1', name: 'Push A', exercises: ['Bench Press', 'OHP', 'Cable Fly'] },
+      { id: 'pw2', name: 'Pull A', exercises: ['Deadlift', 'Barbell Row', 'Pulldown'] },
+    ],
+  },
+  {
+    id: 'p2',
+    name: 'Upper / Lower',
+    workouts: [
+      { id: 'uw1', name: 'Upper 1', exercises: ['Incline Press', 'Rows', 'Lateral Raise'] },
+      { id: 'lw1', name: 'Lower 1', exercises: ['Squat', 'RDL', 'Leg Press'] },
+    ],
+  },
+];
+
 export const socialFeed: SocialPost[] = [
   {
     id: 's1',
     user: 'Maya Rivera',
     handle: '@maya.r',
+    type: 'workout',
     text: 'Tempo squats felt strong today. Controlled every rep and pushed the final set.',
     workout: 'Leg Day Power',
     exercises: 'Back Squat, RDL, Walking Lunges',
@@ -93,11 +136,8 @@ export const socialFeed: SocialPost[] = [
     id: 's2',
     user: 'Chris Nolan',
     handle: '@cnolanfit',
-    text: 'Push day dialed. Hit a clean top set on bench and finished with high-rep dips.',
-    workout: 'Push Day',
-    exercises: 'Bench Press, Incline DB Press, Dips',
-    duration: '54 min',
-    volume: '8,980 lb',
+    type: 'photo',
+    text: 'Post-run sunrise hit different today 🌅',
     likes: 67,
     comments: 14,
     timeAgo: '3h',

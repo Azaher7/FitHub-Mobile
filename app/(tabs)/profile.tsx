@@ -27,10 +27,38 @@ export default function ProfileScreen() {
         </View>
 
         <Card>
-          <SectionHeader title="Recent Activity" />
-          <Text style={styles.item}>• Completed Upper Body Strength</Text>
-          <Text style={styles.item}>• Logged 4.6 mi run</Text>
-          <Text style={styles.item}>• New deadlift rep PR</Text>
+          <SectionHeader title="Workout Calendar" subtitle="Monthly consistency view placeholder" />
+          <View style={styles.placeholderBox}><Text style={styles.placeholderText}>Calendar Heatmap Placeholder</Text></View>
+        </Card>
+
+        <Card>
+          <SectionHeader title="Measurements" subtitle="Bodyweight and body metrics" />
+          <Text style={styles.item}>Weight: 181 lb</Text>
+          <Text style={styles.item}>Body Fat: -- %</Text>
+          <Text style={styles.item}>Chest / Waist / Arms: --</Text>
+        </Card>
+
+        <Card>
+          <SectionHeader title="Progress Pictures" subtitle="Front / Side / Back check-ins" />
+          <View style={styles.imageRow}>
+            <View style={styles.imagePlaceholder} />
+            <View style={styles.imagePlaceholder} />
+            <View style={styles.imagePlaceholder} />
+          </View>
+        </Card>
+
+        <Card>
+          <SectionHeader title="Personal Records" />
+          <Text style={styles.item}>Bench Press: 245 lb</Text>
+          <Text style={styles.item}>Squat: 335 lb</Text>
+          <Text style={styles.item}>Deadlift: 405 lb</Text>
+        </Card>
+
+        <Card>
+          <SectionHeader title="Recent Posts & Photos" />
+          <Text style={styles.item}>• Post: Upper Body Strength recap</Text>
+          <Text style={styles.item}>• Photo: Post-run sunrise</Text>
+          <Text style={styles.item}>• Post: New deadlift rep PR</Text>
         </Card>
       </AppScreen>
       <FloatingActionButton />
@@ -44,5 +72,24 @@ const styles = StyleSheet.create({
   name: { color: tokens.colors.textPrimary, fontSize: 22, fontWeight: '800' },
   handle: { color: tokens.colors.textMuted, fontSize: 13 },
   statsGrid: { flexDirection: 'row', gap: 8 },
-  item: { color: tokens.colors.textSecondary },
+  placeholderBox: {
+    minHeight: 84,
+    borderRadius: tokens.radius.md,
+    borderWidth: 1,
+    borderColor: tokens.colors.borderSubtle,
+    backgroundColor: '#151d2c',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  placeholderText: { color: tokens.colors.textMuted, fontSize: 12 },
+  imageRow: { flexDirection: 'row', gap: 8 },
+  imagePlaceholder: {
+    flex: 1,
+    minHeight: 72,
+    borderRadius: tokens.radius.md,
+    backgroundColor: '#1A2334',
+    borderWidth: 1,
+    borderColor: tokens.colors.borderSubtle,
+  },
+  item: { color: tokens.colors.textSecondary, fontSize: 13 },
 });

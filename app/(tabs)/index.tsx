@@ -1,13 +1,14 @@
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { AthleteSuggestionCard } from '@/components/ui/athlete-suggestion-card';
 import { AppScreen } from '@/components/ui/app-screen';
 import { Card } from '@/components/ui/card';
 import { FloatingActionButton } from '@/components/ui/floating-action-button';
 import { SectionHeader } from '@/components/ui/section-header';
 import { StatCard } from '@/components/ui/stat-card';
 import { tokens } from '@/constants/design-tokens';
-import { weeklySummary, workouts } from '@/data/mock';
+import { suggestedAthletes, weeklySummary, workouts } from '@/data/mock';
 
 export default function HomeScreen() {
   return (
@@ -31,6 +32,25 @@ export default function HomeScreen() {
           <View style={styles.quickActions}>
             <QuickAction label="Start Workout" onPress={() => router.push('/start-workout')} />
             <QuickAction label="Log Cardio" onPress={() => router.push('/(tabs)/train')} />
+          </View>
+        </Card>
+
+        <SectionHeader title="People You May Know" subtitle="Build your fitness network" />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionsRow}>
+          {suggestedAthletes.map((athlete) => (
+            <AthleteSuggestionCard key={athlete.id} athlete={athlete} />
+          ))}
+        </ScrollView>
+
+        <Card>
+          <View style={styles.inviteRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inviteTitle}>Invite a Friend</Text>
+              <Text style={styles.inviteSubtitle}>Train together, compare progress, and stay accountable.</Text>
+            </View>
+            <Pressable style={({ pressed }) => [styles.inviteBtn, pressed && styles.pressedBtn]}>
+              <Text style={styles.inviteBtnText}>Invite</Text>
+            </Pressable>
           </View>
         </Card>
 
@@ -63,6 +83,7 @@ const styles = StyleSheet.create({
   subtitle: { color: tokens.colors.textSecondary, fontSize: 14, lineHeight: 19 },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   quickActions: { flexDirection: 'row', gap: 8 },
+  suggestionsRow: { gap: 10, paddingRight: 8 },
   actionBtn: {
     flex: 1,
     minHeight: 42,
@@ -75,6 +96,18 @@ const styles = StyleSheet.create({
   },
   pressedBtn: { transform: [{ scale: 0.98 }] },
   actionText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 13 },
+  inviteRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  inviteTitle: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 16 },
+  inviteSubtitle: { color: tokens.colors.textSecondary, fontSize: 12, marginTop: 4 },
+  inviteBtn: {
+    minHeight: 36,
+    borderRadius: tokens.radius.pill,
+    backgroundColor: '#6BFFB0',
+    paddingHorizontal: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inviteBtnText: { color: '#07110C', fontWeight: '800', fontSize: 12 },
   workoutTitle: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
   meta: { color: tokens.colors.textSecondary, fontSize: 12 },
 });

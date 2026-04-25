@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: tokens.spacing.lg,
-    paddingTop: 6,
-    gap: 12,
+    paddingTop: 8,
+    gap: 14,
   },
   scrollContent: {
-    paddingBottom: tokens.spacing.xl,
+    paddingBottom: 88,
   },
 });
