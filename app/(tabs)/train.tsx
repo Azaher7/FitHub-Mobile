@@ -22,6 +22,19 @@ export default function TrainScreen() {
     title: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '800' },
     meta: { color: tokens.colors.textSecondary, fontSize: 12 },
     helper: { color: tokens.colors.textMuted, fontSize: 12, marginTop: 6 },
+    splitsHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
+    splitsHeaderText: { flex: 1 },
+    splitsActionBtn: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: tokens.colors.accent,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'transparent',
+    },
+    splitsActionText: { color: tokens.colors.accent, fontSize: 16, fontWeight: '700', lineHeight: 18 },
     splitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
     splitChip: {
       borderRadius: tokens.radius.pill,
@@ -128,7 +141,14 @@ export default function TrainScreen() {
         ) : null}
 
         <Card>
-          <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
+          <View style={styles.splitsHeaderRow}>
+            <View style={styles.splitsHeaderText}>
+              <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
+            </View>
+            <Pressable onPress={() => console.log('Create new workout split')} style={({ pressed }) => [styles.splitsActionBtn, pressed && styles.pressed]}>
+              <Text style={styles.splitsActionText}>+</Text>
+            </Pressable>
+          </View>
           <View style={styles.splitRow}>
             {workoutSplits.map((split) => (
               <Pressable
