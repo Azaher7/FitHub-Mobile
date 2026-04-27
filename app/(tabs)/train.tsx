@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '@/components/ui/app-screen';
 import { Card } from '@/components/ui/card';
@@ -14,13 +14,28 @@ export default function TrainScreen() {
   const { tokens } = useAppTheme();
   const [selectedSplitId, setSelectedSplitId] = useState(workoutSplits[0]?.id ?? '');
   const selectedSplit = useMemo(() => workoutSplits.find((split) => split.id === selectedSplitId) ?? workoutSplits[0], [selectedSplitId]);
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState(workoutSplits[0]?.workouts[0]?.id ?? '');
+  const inProgressWorkout = workouts.find((workout) => workout.date === 'Today');
 
   const styles = StyleSheet.create({
     screen: { flex: 1 },
     title: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '800' },
     meta: { color: tokens.colors.textSecondary, fontSize: 12 },
     helper: { color: tokens.colors.textMuted, fontSize: 12, marginTop: 6 },
-    splitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+    splitsHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
+    splitsHeaderText: { flex: 1 },
+    splitsActionBtn: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: tokens.colors.accent,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'transparent',
+    },
+    splitsActionText: { color: tokens.colors.accent, fontSize: 16, fontWeight: '700', lineHeight: 18 },
+    splitRow: { flexDirection: 'row', gap: 6, paddingRight: 6 },
     splitChip: {
       borderRadius: tokens.radius.pill,
       borderWidth: 1,
@@ -40,6 +55,19 @@ export default function TrainScreen() {
       padding: 10,
       gap: 6,
       marginTop: 6,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    workoutCardActive: {
+      borderColor: tokens.colors.accent,
+      shadowColor: tokens.colors.accentGlow,
+      shadowOpacity: 0.3,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 4,
     },
     workoutCardPressed: {
       transform: [{ scale: 0.99 }],
@@ -68,16 +96,16 @@ export default function TrainScreen() {
     },
     badgeText: { color: tokens.colors.textMuted, fontSize: 9, fontWeight: '700' },
     actionBtn: {
-      minHeight: 42,
-      height: 42,
+      minHeight: 34,
+      height: 34,
       borderRadius: tokens.radius.pill,
       borderWidth: 1,
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 14,
     },
-    actionSecondary: { backgroundColor: tokens.colors.surfaceElevated, borderColor: tokens.colors.border },
-    actionSecondaryText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 12 },
+    actionSecondary: { backgroundColor: 'transparent', borderColor: tokens.colors.accent },
+    actionSecondaryText: { color: tokens.colors.accent, fontWeight: '800', fontSize: 12 },
     pressed: { transform: [{ scale: 0.98 }], opacity: 0.94 },
     row: { flexDirection: 'row', gap: 8 },
     entryCard: {
@@ -98,18 +126,42 @@ export default function TrainScreen() {
       <AppScreen>
         <SectionHeader title="Train" subtitle="Select a split, open a workout, and start logging" />
 
+        {inProgressWorkout ? (
+          <Card>
+            <SectionHeader title="Continue Workout" subtitle="Pick up where you left off" />
+            <Text style={styles.title}>{inProgressWorkout.title}</Text>
+            <Text style={styles.meta}>{inProgressWorkout.focus}</Text>
+            <Text style={styles.meta}>{inProgressWorkout.date} · {inProgressWorkout.duration} · {inProgressWorkout.volume}</Text>
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.actionBtn, styles.actionSecondary, pressed && styles.pressed]}>
+              <Text style={styles.actionSecondaryText}>Continue</Text>
+            </Pressable>
+          </Card>
+        ) : null}
+
         <Card>
-          <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
-          <View style={styles.splitRow}>
+          <View style={styles.splitsHeaderRow}>
+            <View style={styles.splitsHeaderText}>
+              <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
+            </View>
+            <Pressable onPress={() => console.log('Create new workout split')} style={({ pressed }) => [styles.splitsActionBtn, pressed && styles.pressed]}>
+              <Text style={styles.splitsActionText}>+</Text>
+            </Pressable>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.splitRow}>
             {workoutSplits.map((split) => (
               <Pressable
                 key={split.id}
-                onPress={() => setSelectedSplitId(split.id)}
+                onPress={() => {
+                  setSelectedSplitId(split.id);
+                  setSelectedWorkoutId(split.workouts[0]?.id ?? '');
+                }}
                 style={({ pressed }) => [styles.splitChip, selectedSplit?.id === split.id && styles.splitChipActive, pressed && styles.pressed]}>
                 <Text style={[styles.splitChipText, selectedSplit?.id === split.id && styles.splitChipTextActive]}>{split.name}</Text>
               </Pressable>
             ))}
-          </View>
+          </ScrollView>
           <Text style={styles.helper}>{selectedSplit?.description}</Text>
         </Card>
 
@@ -118,8 +170,11 @@ export default function TrainScreen() {
           {selectedSplit?.workouts.map((workout) => (
             <Pressable
               key={workout.id}
-              onPress={() => router.push({ pathname: '/start-workout', params: { workout: workout.name, split: selectedSplit.name } })}
-              style={({ pressed }) => [styles.workoutCard, pressed && styles.workoutCardPressed]}>
+              onPress={() => {
+                setSelectedWorkoutId(workout.id);
+                router.push({ pathname: '/start-workout', params: { workout: workout.name, split: selectedSplit.name } });
+              }}
+              style={({ pressed }) => [styles.workoutCard, selectedWorkoutId === workout.id && styles.workoutCardActive, pressed && styles.workoutCardPressed]}>
               <View style={styles.workoutRow}>
                 <Text style={styles.title}>{workout.name}</Text>
                 <Text style={styles.startHint}>Start →</Text>
