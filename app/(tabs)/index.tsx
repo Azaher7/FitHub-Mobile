@@ -92,6 +92,15 @@ export default function HomeScreen() {
       overflow: 'hidden',
     },
     resumeText: { color: '#F5F7FF', fontSize: 12, fontWeight: '800', zIndex: 1 },
+    suggestionsHeaderRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingRight: 4,
+    },
+    suggestionsTitle: { color: tokens.colors.textPrimary, fontSize: tokens.typography.h3, fontWeight: '700' },
+    inviteText: { color: isDark ? tokens.colors.accent : tokens.colors.accentHover, fontSize: 14, fontWeight: '500' },
+    suggestionsSubtitle: { color: tokens.colors.textMuted, fontSize: tokens.typography.caption, marginTop: 4 },
     suggestionsRow: { gap: 10, paddingRight: 8 },
     workoutTitle: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
     meta: { color: tokens.colors.textSecondary, fontSize: 12, lineHeight: 18 },
@@ -145,6 +154,21 @@ export default function HomeScreen() {
           </View>
         </Card>
 
+        <View>
+          <View style={styles.suggestionsHeaderRow}>
+            <Text style={styles.suggestionsTitle}>Suggested Athletes</Text>
+            <Pressable style={({ pressed }) => [pressed && styles.pressedBtn]}>
+              <Text style={styles.inviteText}>+ Invite a friend</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.suggestionsSubtitle}>People you may know</Text>
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionsRow}>
+          {suggestedAthletes.map((athlete) => (
+            <AthleteSuggestionCard key={athlete.id} athlete={athlete} />
+          ))}
+        </ScrollView>
+
         <SectionHeader title="Recent Workouts" subtitle="Latest sessions" />
         {workouts.map((workout) => (
           <Card key={workout.id}>
@@ -153,13 +177,6 @@ export default function HomeScreen() {
             <Text style={styles.meta}>{workout.date} · {workout.duration} · {workout.volume}</Text>
           </Card>
         ))}
-
-        <SectionHeader title="Suggested Athletes" subtitle="People you may know" />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestionsRow}>
-          {suggestedAthletes.map((athlete) => (
-            <AthleteSuggestionCard key={athlete.id} athlete={athlete} />
-          ))}
-        </ScrollView>
       </AppScreen>
       <FloatingActionButton />
     </View>
