@@ -43,37 +43,38 @@ export default function StartWorkoutScreen() {
     exerciseName: { color: tokens.colors.textPrimary, fontSize: 15, fontWeight: '800', flex: 1 },
     removeExercise: { color: tokens.colors.danger, fontSize: 12, fontWeight: '700' },
     setCard: {
-      marginTop: 8,
+      marginTop: 6,
       borderRadius: tokens.radius.md,
       borderWidth: 1,
       borderColor: tokens.colors.borderSubtle,
       backgroundColor: tokens.colors.input,
-      padding: 10,
-      gap: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 6,
     },
-    setRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    setRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
     setBadge: {
-      minWidth: 34,
+      minWidth: 30,
       borderRadius: tokens.radius.pill,
       borderWidth: 1,
       borderColor: tokens.colors.borderSubtle,
-      paddingVertical: 4,
+      paddingVertical: 3,
       alignItems: 'center',
     },
-    setBadgeText: { color: tokens.colors.textMuted, fontSize: 11, fontWeight: '700' },
+    setBadgeText: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
     miniInput: {
-      flex: 1,
-      minHeight: 38,
+      minHeight: 34,
       borderRadius: tokens.radius.sm,
       borderWidth: 1,
       borderColor: tokens.colors.borderSubtle,
       backgroundColor: tokens.colors.surfaceElevated,
-      paddingHorizontal: 10,
+      paddingHorizontal: 8,
       color: tokens.colors.textPrimary,
+      width: 78,
     },
+    repsInput: { width: 66 },
     completeToggle: {
-      width: 34,
-      height: 34,
+      width: 30,
+      height: 30,
       borderRadius: tokens.radius.sm,
       borderWidth: 1,
       borderColor: tokens.colors.borderSubtle,
@@ -82,18 +83,28 @@ export default function StartWorkoutScreen() {
       backgroundColor: tokens.colors.surfaceElevated,
     },
     completeToggleDone: { backgroundColor: '#22C55E', borderColor: '#22C55E' },
-    completeText: { color: tokens.colors.textPrimary, fontSize: 14, fontWeight: '800' },
+    completeText: { color: tokens.colors.textPrimary, fontSize: 12, fontWeight: '800' },
     completeTextDone: { color: '#07110C' },
-    removeSet: { color: tokens.colors.textMuted, fontSize: 11, fontWeight: '700' },
-    rowActions: { flexDirection: 'row', gap: 8, marginTop: 10 },
+    removeSetBtn: {
+      minHeight: 30,
+      borderRadius: tokens.radius.sm,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      paddingHorizontal: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: tokens.colors.surfaceElevated,
+    },
+    removeSet: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
+    rowActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
     button: {
       borderRadius: tokens.radius.pill,
       borderWidth: 1,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
       alignItems: 'center',
       justifyContent: 'center',
-      minHeight: 40,
+      minHeight: 36,
     },
     primary: {
       backgroundColor: '#42A5F5',
@@ -107,6 +118,13 @@ export default function StartWorkoutScreen() {
     secondary: { backgroundColor: tokens.colors.input, borderColor: tokens.colors.borderSubtle },
     primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12 },
     secondaryText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 12 },
+    compactSecondary: {
+      minHeight: 32,
+      borderRadius: tokens.radius.sm,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      alignSelf: 'flex-start',
+    },
     pressed: { transform: [{ scale: 0.98 }], opacity: 0.94 },
     modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
     pickerSheet: {
@@ -202,7 +220,7 @@ export default function StartWorkoutScreen() {
                         placeholderTextColor={tokens.colors.textMuted}
                       />
                       <TextInput
-                        style={styles.miniInput}
+                        style={[styles.miniInput, styles.repsInput]}
                         value={set.reps}
                         onChangeText={(value) =>
                           setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
@@ -224,16 +242,17 @@ export default function StartWorkoutScreen() {
                         }>
                         <Text style={[styles.completeText, set.completed && styles.completeTextDone]}>✓</Text>
                       </Pressable>
+                      <Pressable
+                        style={styles.removeSetBtn}
+                        onPress={() =>
+                          setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
+                            ...item,
+                            sets: item.sets.filter((s) => s.id !== set.id),
+                          }))
+                        }>
+                        <Text style={styles.removeSet}>Remove</Text>
+                      </Pressable>
                     </View>
-                    <Pressable
-                      onPress={() =>
-                        setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
-                          ...item,
-                          sets: item.sets.filter((s) => s.id !== set.id),
-                        }))
-                      }>
-                      <Text style={styles.removeSet}>Remove set</Text>
-                    </Pressable>
                   </View>
                 ))}
 
@@ -242,7 +261,7 @@ export default function StartWorkoutScreen() {
                     onPress={() =>
                       setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : { ...item, sets: [...item.sets, createSet()] }))
                     }
-                    style={({ pressed }) => [styles.button, styles.secondary, { flex: 1 }, pressed && styles.pressed]}>
+                    style={({ pressed }) => [styles.button, styles.secondary, styles.compactSecondary, pressed && styles.pressed]}>
                     <Text style={styles.secondaryText}>+ Add Set</Text>
                   </Pressable>
                 </View>
