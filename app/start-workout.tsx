@@ -17,7 +17,12 @@ type WorkoutSummary = {
   estimatedVolume: number;
 };
 
-const createSet = () => ({ id: `${Date.now()}-${Math.random()}`, weight: '', reps: '', completed: false });
+const createSet = (previous?: { weight: string; reps: string }) => ({
+  id: `${Date.now()}-${Math.random()}`,
+  weight: previous?.weight ?? '',
+  reps: previous?.reps ?? '',
+  completed: false,
+});
 
 export default function StartWorkoutScreen() {
   const params = useLocalSearchParams<{ workout?: string; split?: string }>();
@@ -41,19 +46,35 @@ export default function StartWorkoutScreen() {
     helper: { color: tokens.colors.textMuted, fontSize: 12, marginTop: 6 },
     exerciseHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
     exerciseName: { color: tokens.colors.textPrimary, fontSize: 15, fontWeight: '800', flex: 1 },
+    lastSetText: { color: tokens.colors.textMuted, fontSize: 11, marginTop: 2 },
     removeExercise: { color: tokens.colors.danger, fontSize: 12, fontWeight: '700' },
-    setCard: {
-      marginTop: 6,
+    exerciseLogCard: {
       borderRadius: tokens.radius.md,
-      borderWidth: 1,
+      padding: 10,
+      gap: 6,
+    },
+    setTableHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingHorizontal: 2,
+      marginTop: 4,
+    },
+    setHeaderText: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
+    setColSet: { width: 42 },
+    setColWeight: { width: 82 },
+    setColReps: { width: 70 },
+    setColCheck: { width: 34, alignItems: 'center' },
+    setCard: {
+      borderBottomWidth: 1,
       borderColor: tokens.colors.borderSubtle,
-      backgroundColor: tokens.colors.input,
-      paddingHorizontal: 8,
-      paddingVertical: 6,
+      paddingHorizontal: 2,
+      paddingVertical: 3,
     },
     setRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+    setRowDone: { opacity: 0.72 },
     setBadge: {
-      minWidth: 30,
+      width: 42,
       borderRadius: tokens.radius.pill,
       borderWidth: 1,
       borderColor: tokens.colors.borderSubtle,
@@ -63,16 +84,17 @@ export default function StartWorkoutScreen() {
     setBadgeText: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
     miniInput: {
       minHeight: 34,
-      borderRadius: tokens.radius.sm,
+      borderRadius: 8,
       borderWidth: 1,
-      borderColor: tokens.colors.borderSubtle,
-      backgroundColor: tokens.colors.surfaceElevated,
+      borderColor: tokens.colors.border,
+      backgroundColor: tokens.colors.surface,
       paddingHorizontal: 8,
       color: tokens.colors.textPrimary,
-      width: 78,
+      width: 82,
+      textAlign: 'center',
     },
-    repsInput: { width: 66 },
-    completeToggle: {
+    repsInput: { width: 70 },
+    checkToggle: {
       width: 30,
       height: 30,
       borderRadius: tokens.radius.sm,
@@ -82,20 +104,10 @@ export default function StartWorkoutScreen() {
       justifyContent: 'center',
       backgroundColor: tokens.colors.surfaceElevated,
     },
-    completeToggleDone: { backgroundColor: '#22C55E', borderColor: '#22C55E' },
-    completeText: { color: tokens.colors.textPrimary, fontSize: 12, fontWeight: '800' },
-    completeTextDone: { color: '#07110C' },
-    removeSetBtn: {
-      minHeight: 30,
-      borderRadius: tokens.radius.sm,
-      borderWidth: 1,
-      borderColor: tokens.colors.borderSubtle,
-      paddingHorizontal: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: tokens.colors.surfaceElevated,
-    },
-    removeSet: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
+    checkToggleDone: { borderColor: tokens.colors.accent, backgroundColor: tokens.colors.accentSoft },
+    checkToggleText: { color: tokens.colors.textMuted, fontSize: 13, fontWeight: '800' },
+    checkToggleTextDone: { color: tokens.colors.accent },
+    setsList: { gap: 2, marginTop: 4 },
     rowActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
     button: {
       borderRadius: tokens.radius.pill,
@@ -107,24 +119,17 @@ export default function StartWorkoutScreen() {
       minHeight: 36,
     },
     primary: {
-      backgroundColor: '#42A5F5',
+      backgroundColor: tokens.colors.accent,
       borderColor: tokens.colors.accentHover,
-      shadowColor: tokens.colors.accentGlow,
-      shadowOpacity: 0.32,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
     },
     secondary: { backgroundColor: tokens.colors.input, borderColor: tokens.colors.borderSubtle },
     primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12 },
     secondaryText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 12 },
-    compactSecondary: {
-      minHeight: 32,
-      borderRadius: tokens.radius.sm,
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      alignSelf: 'flex-start',
-    },
+    disabledBtn: { opacity: 0.5 },
+    disabledPrimary: { backgroundColor: tokens.colors.surfaceElevated, borderColor: tokens.colors.borderSubtle },
+    disabledPrimaryText: { color: tokens.colors.textMuted },
+    addSetTextBtn: { alignSelf: 'flex-start', paddingTop: 2, paddingBottom: 2 },
+    addSetText: { color: tokens.colors.accent, fontSize: 12, fontWeight: '600' },
     pressed: { transform: [{ scale: 0.98 }], opacity: 0.94 },
     modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
     pickerSheet: {
@@ -161,6 +166,8 @@ export default function StartWorkoutScreen() {
     setExercisePickerOpen(false);
   };
 
+  const canFinishWorkout = totalSets > 0;
+
   return (
     <>
       <AppScreen>
@@ -186,85 +193,96 @@ export default function StartWorkoutScreen() {
 
             <Card>
               <View style={styles.rowActions}>
-                <Pressable onPress={() => setExercisePickerOpen(true)} style={({ pressed }) => [styles.button, styles.primary, { flex: 1 }, pressed && styles.pressed]}>
-                  <Text style={styles.primaryText}>Add Exercise</Text>
+                <Pressable onPress={() => setExercisePickerOpen(true)} style={({ pressed }) => [styles.button, styles.secondary, { flex: 1 }, pressed && styles.pressed]}>
+                  <Text style={styles.secondaryText}>+ Add Exercise</Text>
                 </Pressable>
               </View>
               <Text style={styles.helper}>{exercises.length} exercises · {totalSets} sets</Text>
             </Card>
 
             {exercises.map((exercise) => (
-              <Card key={exercise.id}>
+              <Card key={exercise.id} style={styles.exerciseLogCard}>
                 <View style={styles.exerciseHeader}>
-                  <Text style={styles.exerciseName}>{exercise.name}</Text>
-                  <Pressable onPress={() => setExercises((prev) => prev.filter((item) => item.id !== exercise.id))}>
-                    <Text style={styles.removeExercise}>Remove</Text>
-                  </Pressable>
-                </View>
-
-                {exercise.sets.map((set, index) => (
-                  <View key={set.id} style={styles.setCard}>
-                    <View style={styles.setRow}>
-                      <View style={styles.setBadge}><Text style={styles.setBadgeText}>SET {index + 1}</Text></View>
-                      <TextInput
-                        style={styles.miniInput}
-                        value={set.weight}
-                        onChangeText={(value) =>
-                          setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
-                            ...item,
-                            sets: item.sets.map((s) => (s.id === set.id ? { ...s, weight: value } : s)),
-                          }))
-                        }
-                        keyboardType="numeric"
-                        placeholder="Weight"
-                        placeholderTextColor={tokens.colors.textMuted}
-                      />
-                      <TextInput
-                        style={[styles.miniInput, styles.repsInput]}
-                        value={set.reps}
-                        onChangeText={(value) =>
-                          setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
-                            ...item,
-                            sets: item.sets.map((s) => (s.id === set.id ? { ...s, reps: value } : s)),
-                          }))
-                        }
-                        keyboardType="numeric"
-                        placeholder="Reps"
-                        placeholderTextColor={tokens.colors.textMuted}
-                      />
-                      <Pressable
-                        style={[styles.completeToggle, set.completed && styles.completeToggleDone]}
-                        onPress={() =>
-                          setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
-                            ...item,
-                            sets: item.sets.map((s) => (s.id === set.id ? { ...s, completed: !s.completed } : s)),
-                          }))
-                        }>
-                        <Text style={[styles.completeText, set.completed && styles.completeTextDone]}>✓</Text>
-                      </Pressable>
-                      <Pressable
-                        style={styles.removeSetBtn}
-                        onPress={() =>
-                          setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
-                            ...item,
-                            sets: item.sets.filter((s) => s.id !== set.id),
-                          }))
-                        }>
-                        <Text style={styles.removeSet}>Remove</Text>
-                      </Pressable>
-                    </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.exerciseName}>{exercise.name}</Text>
+                    <Text style={styles.lastSetText}>
+                      Last: {exercise.sets.length > 0 ? `${exercise.sets[exercise.sets.length - 1]?.weight || '--'} x ${exercise.sets[exercise.sets.length - 1]?.reps || '--'}` : '-- x --'}
+                    </Text>
                   </View>
-                ))}
-
-                <View style={styles.rowActions}>
-                  <Pressable
-                    onPress={() =>
-                      setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : { ...item, sets: [...item.sets, createSet()] }))
-                    }
-                    style={({ pressed }) => [styles.button, styles.secondary, styles.compactSecondary, pressed && styles.pressed]}>
-                    <Text style={styles.secondaryText}>+ Add Set</Text>
-                  </Pressable>
+                  <Pressable onPress={() => setExercises((prev) => prev.filter((item) => item.id !== exercise.id))}><Text style={styles.removeExercise}>Remove</Text></Pressable>
                 </View>
+
+                <View style={styles.setTableHeader}>
+                  <View style={styles.setColSet}><Text style={styles.setHeaderText}>SET</Text></View>
+                  <View style={styles.setColWeight}><Text style={styles.setHeaderText}>WEIGHT</Text></View>
+                  <View style={styles.setColReps}><Text style={styles.setHeaderText}>REPS</Text></View>
+                  <View style={styles.setColCheck}><Text style={styles.setHeaderText}>✓</Text></View>
+                </View>
+
+                <View style={styles.setsList}>
+                  {exercise.sets.map((set, index) => (
+                    <View key={set.id} style={styles.setCard}>
+                      <View style={[styles.setRow, set.completed && styles.setRowDone]}>
+                        <View style={styles.setBadge}><Text style={styles.setBadgeText}>SET {index + 1}</Text></View>
+                        <TextInput
+                          style={styles.miniInput}
+                          value={set.weight}
+                          onChangeText={(value) =>
+                            setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
+                              ...item,
+                              sets: item.sets.map((s) => (s.id === set.id ? { ...s, weight: value } : s)),
+                            }))
+                          }
+                          keyboardType="numeric"
+                          placeholder="Weight"
+                          placeholderTextColor={tokens.colors.textMuted}
+                        />
+                        <TextInput
+                          style={[styles.miniInput, styles.repsInput]}
+                          value={set.reps}
+                          onChangeText={(value) =>
+                            setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
+                              ...item,
+                              sets: item.sets.map((s) => (s.id === set.id ? { ...s, reps: value } : s)),
+                            }))
+                          }
+                          keyboardType="numeric"
+                          placeholder="Reps"
+                          placeholderTextColor={tokens.colors.textMuted}
+                        />
+                        <Pressable
+                          style={[styles.checkToggle, set.completed && styles.checkToggleDone]}
+                          onPress={() =>
+                            setExercises((prev) => prev.map((item) => item.id !== exercise.id ? item : {
+                              ...item,
+                              sets: item.sets.map((s) => (s.id === set.id ? { ...s, completed: !s.completed } : s)),
+                            }))
+                          }>
+                          <Text style={[styles.checkToggleText, set.completed && styles.checkToggleTextDone]}>✓</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+
+                <Pressable
+                  onPress={() =>
+                    setExercises((prev) => prev.map((item) => {
+                      if (item.id !== exercise.id) {
+                        return item;
+                      }
+
+                      const previousSet = item.sets[item.sets.length - 1];
+
+                      return {
+                        ...item,
+                        sets: [...item.sets, createSet(previousSet)],
+                      };
+                    }))
+                  }
+                  style={({ pressed }) => [styles.addSetTextBtn, pressed && styles.pressed]}>
+                  <Text style={styles.addSetText}>+ Add Set</Text>
+                </Pressable>
               </Card>
             ))}
 
@@ -272,7 +290,7 @@ export default function StartWorkoutScreen() {
               <View style={styles.rowActions}>
                 <Pressable
                   onPress={() =>
-                    setSummary({
+                    canFinishWorkout && setSummary({
                       workoutName,
                       duration: '53 min',
                       exerciseCount: exercises.length,
@@ -280,8 +298,16 @@ export default function StartWorkoutScreen() {
                       estimatedVolume,
                     })
                   }
-                  style={({ pressed }) => [styles.button, styles.primary, { flex: 1 }, pressed && styles.pressed]}>
-                  <Text style={styles.primaryText}>Finish Workout</Text>
+                  disabled={!canFinishWorkout}
+                  style={({ pressed }) => [
+                    styles.button,
+                    styles.primary,
+                    { flex: 1 },
+                    !canFinishWorkout && styles.disabledPrimary,
+                    !canFinishWorkout && styles.disabledBtn,
+                    pressed && canFinishWorkout && styles.pressed,
+                  ]}>
+                  <Text style={[styles.primaryText, !canFinishWorkout && styles.disabledPrimaryText]}>Finish Workout</Text>
                 </Pressable>
               </View>
             </Card>
