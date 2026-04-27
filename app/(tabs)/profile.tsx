@@ -84,13 +84,13 @@ export default function ProfileScreen() {
           <StatCard label="Followers" value="0" accent="#1E88E5" />
         </View>
 
-        <Card>
+        <Card tone="accent">
           <SectionHeader title="Workout Calendar" subtitle="Monthly consistency view placeholder" />
           <View style={styles.placeholderBox}><Text style={styles.placeholderText}>Calendar Heatmap Placeholder</Text></View>
         </Card>
 
-        <Card>
-          <SectionHeader title="Measurements" subtitle="Bodyweight and body metrics" />
+        <Card tone="ai">
+          <SectionHeader title="AI Body Analysis" subtitle="Bodyweight and body metrics" />
           <Text style={styles.item}>Weight: 181 lb</Text>
           <Text style={styles.item}>Body Fat: -- %</Text>
           <Text style={styles.item}>Chest / Waist / Arms: --</Text>

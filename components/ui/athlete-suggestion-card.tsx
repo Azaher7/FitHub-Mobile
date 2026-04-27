@@ -19,6 +19,25 @@ export function AthleteSuggestionCard({ athlete }: AthleteSuggestionCardProps) {
       borderColor: tokens.colors.borderSubtle,
       padding: 14,
       gap: 12,
+      overflow: 'hidden',
+    },
+    accentBlobTop: {
+      position: 'absolute',
+      width: 92,
+      height: 92,
+      borderRadius: 999,
+      top: -40,
+      right: -34,
+      backgroundColor: 'rgba(54, 189, 255, 0.16)',
+    },
+    accentBlobBottom: {
+      position: 'absolute',
+      width: 80,
+      height: 80,
+      borderRadius: 999,
+      bottom: -38,
+      left: -34,
+      backgroundColor: 'rgba(118, 90, 255, 0.12)',
     },
     profileRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: tokens.colors.input },
@@ -29,13 +48,17 @@ export function AthleteSuggestionCard({ athlete }: AthleteSuggestionCardProps) {
       flex: 1,
       minHeight: 34,
       borderRadius: tokens.radius.pill,
-      backgroundColor: 'transparent',
+      backgroundColor: 'rgba(42, 134, 255, 0.16)',
       borderWidth: 1,
-      borderColor: tokens.colors.accent,
+      borderColor: '#63C8FF',
       alignItems: 'center',
       justifyContent: 'center',
+      shadowColor: '#53B7FF',
+      shadowOpacity: 0.24,
+      shadowRadius: 7,
+      shadowOffset: { width: 0, height: 3 },
     },
-    followText: { color: tokens.colors.accent, fontWeight: '800', fontSize: 12 },
+    followText: { color: '#B7EBFF', fontWeight: '800', fontSize: 12 },
     viewBtn: {
       flex: 1,
       minHeight: 34,
@@ -52,6 +75,8 @@ export function AthleteSuggestionCard({ athlete }: AthleteSuggestionCardProps) {
 
   return (
     <View style={styles.card}>
+      <View pointerEvents="none" style={styles.accentBlobTop} />
+      <View pointerEvents="none" style={styles.accentBlobBottom} />
       <View style={styles.profileRow}>
         <View style={styles.avatar} />
         <View style={{ flex: 1 }}>

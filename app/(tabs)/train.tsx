@@ -53,12 +53,13 @@ export default function TrainScreen() {
       opacity: 0.95,
     },
     activeWorkoutCard: {
-      borderColor: tokens.colors.accent,
-      shadowColor: 'rgba(66, 165, 245, 0.12)',
-      shadowOpacity: 0.34,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
+      borderColor: '#63C5FF',
+      backgroundColor: 'rgba(20, 36, 58, 0.95)',
+      shadowColor: '#4AB3FF',
+      shadowOpacity: 0.4,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 7 },
+      elevation: 5,
     },
     workoutRow: {
       flexDirection: 'row',
@@ -113,7 +114,7 @@ export default function TrainScreen() {
       <AppScreen>
         <SectionHeader title="Train" subtitle="Select a split, open a workout, and start logging" />
 
-        <Card>
+        <Card tone="accent">
           <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
           <View style={styles.splitRow}>
             {workoutSplits.map((split) => (
@@ -128,7 +129,7 @@ export default function TrainScreen() {
           <Text style={styles.helper}>{selectedSplit?.description}</Text>
         </Card>
 
-        <Card>
+        <Card tone="accent">
           <SectionHeader title={selectedSplit ? `${selectedSplit.name} Workouts` : 'Workouts'} subtitle="Pick your next session in this split" />
           {selectedSplit?.workouts.map((workout) => (
             <Pressable
