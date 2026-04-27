@@ -22,13 +22,8 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
       overflow: 'hidden',
     },
     primary: {
-      backgroundColor: '#42A5F5',
+      backgroundColor: tokens.colors.accent,
       borderColor: tokens.colors.accentHover,
-      shadowColor: tokens.colors.accentGlow,
-      shadowOpacity: 0.32,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
     },
     secondary: {
       backgroundColor: tokens.colors.surfaceElevated,
