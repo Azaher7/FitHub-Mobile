@@ -12,7 +12,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { useAppTheme } from '@/providers/theme-provider';
 
 export default function HomeScreen() {
-  const { tokens } = useAppTheme();
+  const { tokens, isDark } = useAppTheme();
   const { profile } = useAuth();
   const lastWorkout = workouts[0];
   const firstName = profile?.first_name?.trim();
@@ -40,16 +40,16 @@ export default function HomeScreen() {
       flex: 1,
       minHeight: 38,
       borderRadius: tokens.radius.pill,
-      backgroundColor: '#42A5F5',
+      backgroundColor: tokens.colors.accent,
       borderWidth: 1,
       borderColor: tokens.colors.accentHover,
       alignItems: 'center',
       justifyContent: 'center',
       overflow: 'hidden',
       shadowColor: tokens.colors.accentGlow,
-      shadowOpacity: 0.4,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.32,
+      shadowRadius: 9,
+      shadowOffset: { width: 0, height: 5 },
       elevation: 4,
     },
     primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12, zIndex: 1 },
@@ -67,8 +67,13 @@ export default function HomeScreen() {
     pressedBtn: { transform: [{ scale: 0.98 }], opacity: 0.94 },
     pressedPrimary: { backgroundColor: tokens.colors.accentPressed, borderColor: tokens.colors.accentPressed },
     continueCard: {
-      backgroundColor: tokens.colors.cardAlt,
+      backgroundColor: isDark ? '#101B31' : tokens.colors.surface,
       borderColor: tokens.colors.accent,
+      shadowColor: tokens.colors.accentGlow,
+      shadowOpacity: isDark ? 0.24 : 0.14,
+      shadowRadius: isDark ? 12 : 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: isDark ? 4 : 2,
       gap: 10,
     },
     continueMeta: { color: tokens.colors.textMuted, fontSize: 12 },
@@ -81,15 +86,10 @@ export default function HomeScreen() {
       paddingHorizontal: 14,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#42A5F5',
+      backgroundColor: tokens.colors.accent,
       borderWidth: 1,
       borderColor: tokens.colors.accentHover,
       overflow: 'hidden',
-      shadowColor: tokens.colors.accentGlow,
-      shadowOpacity: 0.36,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
     },
     resumeText: { color: '#F5F7FF', fontSize: 12, fontWeight: '800', zIndex: 1 },
     suggestionsRow: { gap: 10, paddingRight: 8 },
