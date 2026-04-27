@@ -25,26 +25,17 @@ export default function HomeScreen() {
       padding: 14,
       overflow: 'hidden',
       borderWidth: 1,
-      borderColor: 'rgba(68, 152, 255, 0.2)',
-      backgroundColor: 'rgba(14, 20, 34, 0.68)',
+      borderColor: 'rgba(68, 152, 255, 0.16)',
+      backgroundColor: 'rgba(14, 20, 34, 0.82)',
     },
     heroGlow: {
       position: 'absolute',
-      width: 230,
-      height: 140,
-      borderRadius: 999,
-      top: -68,
-      left: -22,
-      backgroundColor: 'rgba(68, 173, 255, 0.18)',
-    },
-    heroGlow2: {
-      position: 'absolute',
-      width: 160,
+      width: 210,
       height: 120,
       borderRadius: 999,
-      top: -40,
-      right: -48,
-      backgroundColor: 'rgba(124, 91, 255, 0.15)',
+      top: -54,
+      left: -24,
+      backgroundColor: 'rgba(68, 173, 255, 0.14)',
     },
     eyebrow: { color: tokens.colors.textSecondary, fontSize: 16, fontWeight: '700' },
     title: { color: tokens.colors.textPrimary, fontSize: 28, fontWeight: '800', lineHeight: 34 },
@@ -124,7 +115,6 @@ export default function HomeScreen() {
       <AppScreen>
         <View style={styles.hero}>
           <View pointerEvents="none" style={styles.heroGlow} />
-          <View pointerEvents="none" style={styles.heroGlow2} />
           <Text style={styles.eyebrow}>{welcomeText}</Text>
           <Text style={styles.title}>Ready for today&apos;s training?</Text>
           <Text style={styles.subtitle}>Let&apos;s keep your momentum and build on last session.</Text>
@@ -139,7 +129,7 @@ export default function HomeScreen() {
           <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#42A5F5" />
         </View>
 
-        <Card tone="accent">
+        <Card>
           <SectionHeader title="Quick Actions" />
           <View style={styles.quickActions}>
             <Pressable
@@ -153,8 +143,8 @@ export default function HomeScreen() {
           </View>
         </Card>
 
-        <Card tone="accent" style={styles.continueCard}>
-          <SectionHeader title="Continue Workout" subtitle="Pick up where you left off" />
+        <Card tone="featured" style={styles.continueCard}>
+          <SectionHeader title="Today&apos;s Focus" subtitle="Pick up where you left off" />
           <Text style={styles.continueMeta}>{lastWorkout?.date ?? 'Today'} · {lastWorkout?.duration ?? '--'} · {lastWorkout?.volume ?? '--'}</Text>
           <View style={styles.continueRow}>
             <View style={{ flex: 1 }}>

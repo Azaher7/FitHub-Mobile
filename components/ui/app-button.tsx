@@ -48,7 +48,7 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
       ...StyleSheet.absoluteFillObject,
       top: '52%',
       bottom: 0,
-      backgroundColor: 'rgba(99, 84, 255, 0.2)',
+      backgroundColor: 'rgba(33, 148, 255, 0.2)',
     },
     secondary: {
       backgroundColor: tokens.colors.surfaceElevated,

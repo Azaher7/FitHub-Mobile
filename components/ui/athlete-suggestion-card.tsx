@@ -37,7 +37,7 @@ export function AthleteSuggestionCard({ athlete }: AthleteSuggestionCardProps) {
       borderRadius: 999,
       bottom: -38,
       left: -34,
-      backgroundColor: 'rgba(118, 90, 255, 0.12)',
+      backgroundColor: 'rgba(52, 156, 255, 0.1)',
     },
     profileRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     avatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: tokens.colors.input },

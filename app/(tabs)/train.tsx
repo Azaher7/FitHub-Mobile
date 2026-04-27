@@ -114,7 +114,7 @@ export default function TrainScreen() {
       <AppScreen>
         <SectionHeader title="Train" subtitle="Select a split, open a workout, and start logging" />
 
-        <Card tone="accent">
+        <Card>
           <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
           <View style={styles.splitRow}>
             {workoutSplits.map((split) => (
@@ -129,7 +129,7 @@ export default function TrainScreen() {
           <Text style={styles.helper}>{selectedSplit?.description}</Text>
         </Card>
 
-        <Card tone="accent">
+        <Card>
           <SectionHeader title={selectedSplit ? `${selectedSplit.name} Workouts` : 'Workouts'} subtitle="Pick your next session in this split" />
           {selectedSplit?.workouts.map((workout) => (
             <Pressable

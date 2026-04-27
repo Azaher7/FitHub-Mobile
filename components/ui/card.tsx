@@ -5,7 +5,7 @@ import { useAppTheme } from '@/providers/theme-provider';
 
 type CardProps = PropsWithChildren<{
   style?: StyleProp<ViewStyle>;
-  tone?: 'default' | 'accent' | 'ai';
+  tone?: 'default' | 'featured' | 'ai';
 }>;
 
 export function Card({ children, style, tone = 'default' }: CardProps) {
@@ -28,33 +28,38 @@ export function Card({ children, style, tone = 'default' }: CardProps) {
       overflow: 'hidden',
     },
     glowBorder: {
-      borderColor: tone === 'ai' ? 'rgba(129, 121, 255, 0.45)' : 'rgba(88, 184, 255, 0.45)',
+      borderColor: tone === 'ai' ? 'rgba(86, 196, 255, 0.46)' : 'rgba(88, 184, 255, 0.48)',
+      shadowColor: '#48B9FF',
+      shadowOpacity: tone === 'featured' ? 0.24 : 0.18,
+      shadowRadius: tone === 'featured' ? 14 : 10,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: tone === 'featured' ? 6 : 4,
     },
     topAccent: {
       position: 'absolute',
-      top: -22,
-      left: -8,
-      width: 164,
-      height: 64,
+      top: -14,
+      left: 0,
+      width: 190,
+      height: 56,
       borderRadius: 999,
-      backgroundColor: tone === 'ai' ? 'rgba(112, 93, 255, 0.24)' : 'rgba(64, 192, 255, 0.24)',
-      opacity: 0.8,
+      backgroundColor: tone === 'ai' ? 'rgba(76, 209, 255, 0.18)' : 'rgba(64, 192, 255, 0.16)',
+      opacity: 0.74,
     },
-    cornerAccent: {
+    bottomAccent: {
       position: 'absolute',
-      width: 90,
-      height: 90,
+      width: 118,
+      height: 44,
       borderRadius: 999,
-      right: -35,
-      bottom: -44,
-      backgroundColor: tone === 'ai' ? 'rgba(105, 67, 255, 0.16)' : 'rgba(33, 212, 255, 0.12)',
+      right: -36,
+      bottom: -18,
+      backgroundColor: tone === 'ai' ? 'rgba(56, 188, 255, 0.14)' : 'rgba(33, 212, 255, 0.1)',
     },
   });
 
   return (
     <View style={[styles.card, isGlowCard && styles.glowBorder, style]}>
       {isGlowCard ? <View pointerEvents="none" style={styles.topAccent} /> : null}
-      {isGlowCard ? <View pointerEvents="none" style={styles.cornerAccent} /> : null}
+      {isGlowCard ? <View pointerEvents="none" style={styles.bottomAccent} /> : null}
       {children}
     </View>
   );
