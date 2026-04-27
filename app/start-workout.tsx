@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -20,8 +20,10 @@ type WorkoutSummary = {
 const createSet = () => ({ id: `${Date.now()}-${Math.random()}`, weight: '', reps: '', completed: false });
 
 export default function StartWorkoutScreen() {
+  const params = useLocalSearchParams<{ workout?: string; split?: string }>();
   const { tokens } = useAppTheme();
-  const [workoutName, setWorkoutName] = useState('Custom Session');
+  const initialWorkoutName = typeof params.workout === 'string' ? params.workout : 'Custom Session';
+  const [workoutName, setWorkoutName] = useState(initialWorkoutName);
   const [exercisePickerOpen, setExercisePickerOpen] = useState(false);
   const [exercises, setExercises] = useState<LoggerExercise[]>([]);
   const [summary, setSummary] = useState<WorkoutSummary | null>(null);
@@ -161,6 +163,7 @@ export default function StartWorkoutScreen() {
             <Card>
               <Text style={styles.helper}>Workout name</Text>
               <TextInput value={workoutName} onChangeText={setWorkoutName} style={styles.input} placeholder="Workout name" placeholderTextColor={tokens.colors.textMuted} />
+              {typeof params.split === 'string' ? <Text style={styles.helper}>Split: {params.split}</Text> : null}
             </Card>
 
             <Card>
