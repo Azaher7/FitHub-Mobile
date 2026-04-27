@@ -15,6 +15,7 @@ export default function TrainScreen() {
   const [selectedSplitId, setSelectedSplitId] = useState(workoutSplits[0]?.id ?? '');
   const selectedSplit = useMemo(() => workoutSplits.find((split) => split.id === selectedSplitId) ?? workoutSplits[0], [selectedSplitId]);
   const [selectedWorkoutId, setSelectedWorkoutId] = useState(workoutSplits[0]?.workouts[0]?.id ?? '');
+  const inProgressWorkout = workouts.find((workout) => workout.date === 'Today');
 
   const styles = StyleSheet.create({
     screen: { flex: 1 },
@@ -111,6 +112,20 @@ export default function TrainScreen() {
     <View style={styles.screen}>
       <AppScreen>
         <SectionHeader title="Train" subtitle="Select a split, open a workout, and start logging" />
+
+        {inProgressWorkout ? (
+          <Card>
+            <SectionHeader title="Continue Workout" subtitle="Pick up where you left off" />
+            <Text style={styles.title}>{inProgressWorkout.title}</Text>
+            <Text style={styles.meta}>{inProgressWorkout.focus}</Text>
+            <Text style={styles.meta}>{inProgressWorkout.date} · {inProgressWorkout.duration} · {inProgressWorkout.volume}</Text>
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.actionBtn, styles.actionSecondary, pressed && styles.pressed]}>
+              <Text style={styles.actionSecondaryText}>Continue</Text>
+            </Pressable>
+          </Card>
+        ) : null}
 
         <Card>
           <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
