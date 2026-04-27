@@ -15,12 +15,26 @@ export default function TrainScreen() {
   const [selectedSplitId, setSelectedSplitId] = useState(workoutSplits[0]?.id ?? '');
   const selectedSplit = useMemo(() => workoutSplits.find((split) => split.id === selectedSplitId) ?? workoutSplits[0], [selectedSplitId]);
   const [selectedWorkoutId, setSelectedWorkoutId] = useState(workoutSplits[0]?.workouts[0]?.id ?? '');
+  const inProgressWorkout = workouts.find((workout) => workout.date === 'Today');
 
   const styles = StyleSheet.create({
     screen: { flex: 1 },
     title: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '800' },
     meta: { color: tokens.colors.textSecondary, fontSize: 12 },
     helper: { color: tokens.colors.textMuted, fontSize: 12, marginTop: 6 },
+    splitsHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
+    splitsHeaderText: { flex: 1 },
+    splitsActionBtn: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: tokens.colors.accent,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'transparent',
+    },
+    splitsActionText: { color: tokens.colors.accent, fontSize: 16, fontWeight: '700', lineHeight: 18 },
     splitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
     splitChip: {
       borderRadius: tokens.radius.pill,
@@ -112,8 +126,29 @@ export default function TrainScreen() {
       <AppScreen>
         <SectionHeader title="Train" subtitle="Select a split, open a workout, and start logging" />
 
+        {inProgressWorkout ? (
+          <Card>
+            <SectionHeader title="Continue Workout" subtitle="Pick up where you left off" />
+            <Text style={styles.title}>{inProgressWorkout.title}</Text>
+            <Text style={styles.meta}>{inProgressWorkout.focus}</Text>
+            <Text style={styles.meta}>{inProgressWorkout.date} · {inProgressWorkout.duration} · {inProgressWorkout.volume}</Text>
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.actionBtn, styles.actionSecondary, pressed && styles.pressed]}>
+              <Text style={styles.actionSecondaryText}>Continue</Text>
+            </Pressable>
+          </Card>
+        ) : null}
+
         <Card>
-          <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
+          <View style={styles.splitsHeaderRow}>
+            <View style={styles.splitsHeaderText}>
+              <SectionHeader title="Workout Splits" subtitle="Your training plans and workout rotation" />
+            </View>
+            <Pressable onPress={() => console.log('Create new workout split')} style={({ pressed }) => [styles.splitsActionBtn, pressed && styles.pressed]}>
+              <Text style={styles.splitsActionText}>+</Text>
+            </Pressable>
+          </View>
           <View style={styles.splitRow}>
             {workoutSplits.map((split) => (
               <Pressable
