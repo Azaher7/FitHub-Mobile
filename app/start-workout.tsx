@@ -58,7 +58,7 @@ export default function StartWorkoutScreen() {
       alignItems: 'center',
       gap: 6,
       paddingHorizontal: 2,
-      marginTop: 6,
+      marginTop: 4,
     },
     setHeaderText: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
     setColSet: { width: 42 },
@@ -66,12 +66,10 @@ export default function StartWorkoutScreen() {
     setColReps: { width: 70 },
     setColCheck: { width: 34, alignItems: 'center' },
     setCard: {
-      borderRadius: tokens.radius.sm,
-      borderWidth: 1,
+      borderBottomWidth: 1,
       borderColor: tokens.colors.borderSubtle,
-      backgroundColor: tokens.colors.input,
-      paddingHorizontal: 6,
-      paddingVertical: 5,
+      paddingHorizontal: 2,
+      paddingVertical: 3,
     },
     setRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
     setRowDone: { opacity: 0.72 },
@@ -86,10 +84,10 @@ export default function StartWorkoutScreen() {
     setBadgeText: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
     miniInput: {
       minHeight: 34,
-      borderRadius: tokens.radius.sm,
+      borderRadius: 8,
       borderWidth: 1,
-      borderColor: tokens.colors.borderSubtle,
-      backgroundColor: tokens.colors.surfaceElevated,
+      borderColor: tokens.colors.border,
+      backgroundColor: tokens.colors.surface,
       paddingHorizontal: 8,
       color: tokens.colors.textPrimary,
       width: 82,
@@ -109,7 +107,7 @@ export default function StartWorkoutScreen() {
     checkToggleDone: { borderColor: tokens.colors.accent, backgroundColor: tokens.colors.accentSoft },
     checkToggleText: { color: tokens.colors.textMuted, fontSize: 13, fontWeight: '800' },
     checkToggleTextDone: { color: tokens.colors.accent },
-    setsList: { gap: 8, marginTop: 6 },
+    setsList: { gap: 2, marginTop: 4 },
     rowActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
     button: {
       borderRadius: tokens.radius.pill,
@@ -218,7 +216,7 @@ export default function StartWorkoutScreen() {
                   <View style={styles.setColSet}><Text style={styles.setHeaderText}>SET</Text></View>
                   <View style={styles.setColWeight}><Text style={styles.setHeaderText}>WEIGHT</Text></View>
                   <View style={styles.setColReps}><Text style={styles.setHeaderText}>REPS</Text></View>
-                  <View style={styles.setColCheck}><Text style={styles.setHeaderText}>CHECK</Text></View>
+                  <View style={styles.setColCheck}><Text style={styles.setHeaderText}>✓</Text></View>
                 </View>
 
                 <View style={styles.setsList}>
