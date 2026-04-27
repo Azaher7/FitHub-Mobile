@@ -42,11 +42,16 @@ export default function HomeScreen() {
       borderRadius: tokens.radius.pill,
       backgroundColor: tokens.colors.accent,
       borderWidth: 1,
-      borderColor: tokens.colors.accent,
+      borderColor: '#1E88E5',
       alignItems: 'center',
       justifyContent: 'center',
+      shadowColor: 'rgba(66, 165, 245, 0.25)',
+      shadowOpacity: 0.4,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
     },
-    primaryText: { color: '#062016', fontWeight: '800', fontSize: 12 },
+    primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12 },
     secondaryAction: {
       flex: 1,
       minHeight: 38,
@@ -58,7 +63,7 @@ export default function HomeScreen() {
       justifyContent: 'center',
     },
     secondaryText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 12 },
-    pressedBtn: { transform: [{ scale: 0.98 }] },
+    pressedBtn: { transform: [{ scale: 0.98 }], opacity: 0.92 },
     continueCard: {
       backgroundColor: tokens.colors.cardAlt,
       borderColor: tokens.colors.accent,
@@ -76,9 +81,14 @@ export default function HomeScreen() {
       justifyContent: 'center',
       backgroundColor: tokens.colors.accent,
       borderWidth: 1,
-      borderColor: tokens.colors.accent,
+      borderColor: '#1E88E5',
+      shadowColor: 'rgba(66, 165, 245, 0.25)',
+      shadowOpacity: 0.36,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
     },
-    resumeText: { color: '#062016', fontSize: 12, fontWeight: '800' },
+    resumeText: { color: '#F5F7FF', fontSize: 12, fontWeight: '800' },
     suggestionsRow: { gap: 10, paddingRight: 8 },
     workoutTitle: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
     meta: { color: tokens.colors.textSecondary, fontSize: 12, lineHeight: 18 },
@@ -96,10 +106,10 @@ export default function HomeScreen() {
 
         <SectionHeader title="Weekly Snapshot" subtitle="Your consistency at a glance" />
         <View style={styles.statsGrid}>
-          <StatCard label="Workouts this week" value={String(weeklySummary.workoutsThisWeek)} accent="#6BFFB0" />
-          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#72D9B0" />
-          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#9CE3C4" />
-          <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#FFD985" />
+          <StatCard label="Workouts this week" value={String(weeklySummary.workoutsThisWeek)} accent="#42A5F5" />
+          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#1E88E5" />
+          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#1565C0" />
+          <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#42A5F5" />
         </View>
 
         <Card>

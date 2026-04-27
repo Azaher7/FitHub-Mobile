@@ -22,7 +22,12 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
     },
     primary: {
       backgroundColor: tokens.colors.accent,
-      borderColor: tokens.colors.accent,
+      borderColor: '#1E88E5',
+      shadowColor: 'rgba(66, 165, 245, 0.25)',
+      shadowOpacity: 0.32,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
     },
     secondary: {
       backgroundColor: tokens.colors.surfaceElevated,
@@ -37,7 +42,7 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
       fontWeight: '600',
     },
     primaryLabel: {
-      color: '#062016',
+      color: '#F5F7FF',
     },
     secondaryLabel: {
       color: tokens.colors.textPrimary,

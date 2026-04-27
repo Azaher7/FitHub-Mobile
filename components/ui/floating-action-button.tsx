@@ -19,19 +19,22 @@ export function FloatingActionButton() {
       gap: 6,
       height: 46,
       borderRadius: tokens.radius.pill,
-      backgroundColor: tokens.colors.success,
+      backgroundColor: '#42A5F5',
+      borderWidth: 1,
+      borderColor: '#1E88E5',
       paddingHorizontal: 14,
-      shadowColor: tokens.colors.success,
-      shadowOpacity: 0.22,
-      shadowRadius: 12,
+      shadowColor: 'rgba(66, 165, 245, 0.25)',
+      shadowOpacity: 0.4,
+      shadowRadius: 14,
       shadowOffset: { width: 0, height: 6 },
       elevation: 6,
     },
     pressed: {
       transform: [{ scale: 0.97 }],
+      backgroundColor: '#1565C0',
     },
     label: {
-      color: '#07110C',
+      color: '#F5F7FF',
       fontWeight: '800',
       fontSize: 13,
     },
@@ -42,7 +45,7 @@ export function FloatingActionButton() {
       <Pressable
         onPress={() => router.push('/start-workout')}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
-        <Ionicons name="add" size={20} color="#07110C" />
+        <Ionicons name="add" size={20} color="#F5F7FF" />
         <Text style={styles.label}>Start Workout</Text>
       </Pressable>
     </View>
