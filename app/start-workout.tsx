@@ -1,11 +1,12 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppScreen } from '@/components/ui/app-screen';
 import { Card } from '@/components/ui/card';
 import { SectionHeader } from '@/components/ui/section-header';
 import { WorkoutSummaryCard } from '@/components/workout/workout-summary-card';
+import { exerciseLibrary } from '@/data/mock';
 import { LoggerExercise, workoutPickerExercises } from '@/data/workout-logging';
 import { useAppTheme } from '@/providers/theme-provider';
 
@@ -32,6 +33,8 @@ export default function StartWorkoutScreen() {
   const [exercisePickerOpen, setExercisePickerOpen] = useState(false);
   const [exercises, setExercises] = useState<LoggerExercise[]>([]);
   const [summary, setSummary] = useState<WorkoutSummary | null>(null);
+  const [sessionStartMs] = useState(Date.now());
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const styles = StyleSheet.create({
     input: {
@@ -44,6 +47,35 @@ export default function StartWorkoutScreen() {
       color: tokens.colors.textPrimary,
     },
     helper: { color: tokens.colors.textMuted, fontSize: 12, marginTop: 6 },
+    summaryBar: {
+      borderRadius: tokens.radius.md,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      backgroundColor: tokens.colors.input,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    summaryStats: { flex: 1, flexDirection: 'row', gap: 10 },
+    summaryStat: { flex: 1, gap: 2 },
+    summaryLabel: { color: tokens.colors.textMuted, fontSize: 10, fontWeight: '700' },
+    summaryValue: { color: tokens.colors.textPrimary, fontSize: 12, fontWeight: '800' },
+    muscleMap: {
+      width: 52,
+      minHeight: 44,
+      borderRadius: tokens.radius.sm,
+      borderWidth: 1,
+      borderColor: tokens.colors.borderSubtle,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 4,
+      gap: 2,
+      backgroundColor: tokens.colors.surface,
+    },
+    muscleMapIcon: { color: tokens.colors.textSecondary, fontSize: 14 },
+    muscleMapHint: { color: tokens.colors.accent, fontSize: 8, fontWeight: '700' },
     exerciseHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
     exerciseName: { color: tokens.colors.textPrimary, fontSize: 15, fontWeight: '800', flex: 1 },
     lastSetText: { color: tokens.colors.textMuted, fontSize: 11, marginTop: 2 },
@@ -156,22 +188,77 @@ export default function StartWorkoutScreen() {
 
   const totalSets = useMemo(() => exercises.reduce((sum, exercise) => sum + exercise.sets.length, 0), [exercises]);
 
-  const estimatedVolume = useMemo(
-    () => exercises.reduce((sum, exercise) => sum + exercise.sets.reduce((setSum, set) => setSum + (Number(set.weight) || 0) * (Number(set.reps) || 0), 0), 0),
+  const completedSets = useMemo(
+    () => exercises.reduce((sum, exercise) => sum + exercise.sets.filter((set) => set.completed).length, 0),
     [exercises],
   );
+
+  const completedVolume = useMemo(
+    () => exercises.reduce((sum, exercise) => sum + exercise.sets.reduce((setSum, set) => {
+      if (!set.completed) {
+        return setSum;
+      }
+
+      const weight = Number(set.weight);
+      const reps = Number(set.reps);
+
+      if (!weight || !reps) {
+        return setSum;
+      }
+
+      return setSum + weight * reps;
+    }, 0), 0),
+    [exercises],
+  );
+
+  const activeMuscles = useMemo(() => {
+    const completedExerciseNames = new Set(
+      exercises.filter((exercise) => exercise.sets.some((set) => set.completed)).map((exercise) => exercise.name),
+    );
+
+    const groups = exerciseLibrary
+      .filter((exercise) => completedExerciseNames.has(exercise.name))
+      .map((exercise) => exercise.muscleGroup);
+
+    return Array.from(new Set(groups));
+  }, [exercises]);
+
+  useEffect(() => {
+    if (summary) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - sessionStartMs) / 1000));
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [sessionStartMs, summary]);
+
+  const elapsedDisplay = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, '0')}:${String(elapsedSeconds % 60).padStart(2, '0')}`;
 
   const addExercise = (name: string) => {
     setExercises((prev) => [...prev, { id: `${Date.now()}-${Math.random()}`, name, sets: [createSet()] }]);
     setExercisePickerOpen(false);
   };
 
-  const canFinishWorkout = totalSets > 0;
+  const canFinishWorkout = completedSets > 0;
 
   return (
     <>
       <AppScreen>
         <SectionHeader title="Start Workout" subtitle="Fast, simple logging" />
+        <View style={styles.summaryBar}>
+          <View style={styles.summaryStats}>
+            <View style={styles.summaryStat}><Text style={styles.summaryLabel}>Duration</Text><Text style={styles.summaryValue}>{elapsedDisplay}</Text></View>
+            <View style={styles.summaryStat}><Text style={styles.summaryLabel}>Volume</Text><Text style={styles.summaryValue}>{Math.round(completedVolume).toLocaleString()} lb</Text></View>
+            <View style={styles.summaryStat}><Text style={styles.summaryLabel}>Sets</Text><Text style={styles.summaryValue}>{completedSets}</Text></View>
+          </View>
+          <View style={styles.muscleMap}>
+            <Text style={styles.muscleMapIcon}>🧍</Text>
+            <Text style={styles.muscleMapHint}>{activeMuscles.slice(0, 2).join(' · ') || 'No active'}</Text>
+          </View>
+        </View>
 
         {summary ? (
           <WorkoutSummaryCard
@@ -292,10 +379,10 @@ export default function StartWorkoutScreen() {
                   onPress={() =>
                     canFinishWorkout && setSummary({
                       workoutName,
-                      duration: '53 min',
+                      duration: elapsedDisplay,
                       exerciseCount: exercises.length,
-                      totalSets,
-                      estimatedVolume,
+                      totalSets: completedSets,
+                      estimatedVolume: completedVolume,
                     })
                   }
                   disabled={!canFinishWorkout}
