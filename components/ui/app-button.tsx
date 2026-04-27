@@ -19,10 +19,16 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
       justifyContent: 'center',
       paddingHorizontal: 16,
       borderWidth: 1,
+      overflow: 'hidden',
     },
     primary: {
-      backgroundColor: tokens.colors.accent,
-      borderColor: tokens.colors.accent,
+      backgroundColor: '#42A5F5',
+      borderColor: tokens.colors.accentHover,
+      shadowColor: tokens.colors.accentGlow,
+      shadowOpacity: 0.32,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
     },
     secondary: {
       backgroundColor: tokens.colors.surfaceElevated,
@@ -37,7 +43,8 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
       fontWeight: '600',
     },
     primaryLabel: {
-      color: '#062016',
+      color: '#F5F7FF',
+      zIndex: 1,
     },
     secondaryLabel: {
       color: tokens.colors.textPrimary,
@@ -48,12 +55,16 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
     pressed: {
       opacity: 0.82,
     },
+    pressedPrimary: {
+      backgroundColor: tokens.colors.accentPressed,
+      borderColor: tokens.colors.accentPressed,
+    },
   });
 
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.base, styles[variant], pressed && styles.pressed]}>
+      style={({ pressed }) => [styles.base, styles[variant], pressed && styles.pressed, pressed && variant === 'primary' && styles.pressedPrimary]}>
       <Text style={[styles.label, styles[`${variant}Label`]]}>{children}</Text>
     </Pressable>
   );

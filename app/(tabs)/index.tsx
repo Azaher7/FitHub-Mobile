@@ -40,13 +40,19 @@ export default function HomeScreen() {
       flex: 1,
       minHeight: 38,
       borderRadius: tokens.radius.pill,
-      backgroundColor: tokens.colors.accent,
+      backgroundColor: '#42A5F5',
       borderWidth: 1,
-      borderColor: tokens.colors.accent,
+      borderColor: tokens.colors.accentHover,
       alignItems: 'center',
       justifyContent: 'center',
+      overflow: 'hidden',
+      shadowColor: tokens.colors.accentGlow,
+      shadowOpacity: 0.4,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
     },
-    primaryText: { color: '#062016', fontWeight: '800', fontSize: 12 },
+    primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12, zIndex: 1 },
     secondaryAction: {
       flex: 1,
       minHeight: 38,
@@ -58,7 +64,8 @@ export default function HomeScreen() {
       justifyContent: 'center',
     },
     secondaryText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 12 },
-    pressedBtn: { transform: [{ scale: 0.98 }] },
+    pressedBtn: { transform: [{ scale: 0.98 }], opacity: 0.94 },
+    pressedPrimary: { backgroundColor: tokens.colors.accentPressed, borderColor: tokens.colors.accentPressed },
     continueCard: {
       backgroundColor: tokens.colors.cardAlt,
       borderColor: tokens.colors.accent,
@@ -74,11 +81,17 @@ export default function HomeScreen() {
       paddingHorizontal: 14,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: tokens.colors.accent,
+      backgroundColor: '#42A5F5',
       borderWidth: 1,
-      borderColor: tokens.colors.accent,
+      borderColor: tokens.colors.accentHover,
+      overflow: 'hidden',
+      shadowColor: tokens.colors.accentGlow,
+      shadowOpacity: 0.36,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
     },
-    resumeText: { color: '#062016', fontSize: 12, fontWeight: '800' },
+    resumeText: { color: '#F5F7FF', fontSize: 12, fontWeight: '800', zIndex: 1 },
     suggestionsRow: { gap: 10, paddingRight: 8 },
     workoutTitle: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
     meta: { color: tokens.colors.textSecondary, fontSize: 12, lineHeight: 18 },
@@ -96,16 +109,18 @@ export default function HomeScreen() {
 
         <SectionHeader title="Weekly Snapshot" subtitle="Your consistency at a glance" />
         <View style={styles.statsGrid}>
-          <StatCard label="Workouts this week" value={String(weeklySummary.workoutsThisWeek)} accent="#6BFFB0" />
-          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#72D9B0" />
-          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#9CE3C4" />
-          <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#FFD985" />
+          <StatCard label="Workouts this week" value={String(weeklySummary.workoutsThisWeek)} accent="#42A5F5" />
+          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#1E88E5" />
+          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#1565C0" />
+          <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#42A5F5" />
         </View>
 
         <Card>
           <SectionHeader title="Quick Actions" />
           <View style={styles.quickActions}>
-            <Pressable onPress={() => router.push('/start-workout')} style={({ pressed }) => [styles.primaryAction, pressed && styles.pressedBtn]}>
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.primaryAction, pressed && styles.pressedBtn, pressed && styles.pressedPrimary]}>
               <Text style={styles.primaryText}>Start Workout</Text>
             </Pressable>
             <Pressable onPress={() => router.push('/(tabs)/train')} style={({ pressed }) => [styles.secondaryAction, pressed && styles.pressedBtn]}>
@@ -122,7 +137,9 @@ export default function HomeScreen() {
               <Text style={styles.continueTitle}>{lastWorkout?.title ?? 'No active workout yet'}</Text>
               <Text style={styles.continueFocus}>{lastWorkout?.focus ?? 'Start a new session when ready.'}</Text>
             </View>
-            <Pressable onPress={() => router.push('/start-workout')} style={({ pressed }) => [styles.resumeBtn, pressed && styles.pressedBtn]}>
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.resumeBtn, pressed && styles.pressedBtn, pressed && styles.pressedPrimary]}>
               <Text style={styles.resumeText}>{lastWorkout ? 'Resume' : 'Start'}</Text>
             </Pressable>
           </View>
