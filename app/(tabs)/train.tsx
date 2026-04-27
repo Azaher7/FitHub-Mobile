@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '@/components/ui/app-screen';
 import { Card } from '@/components/ui/card';
@@ -35,7 +35,7 @@ export default function TrainScreen() {
       backgroundColor: 'transparent',
     },
     splitsActionText: { color: tokens.colors.accent, fontSize: 16, fontWeight: '700', lineHeight: 18 },
-    splitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+    splitRow: { flexDirection: 'row', gap: 6, paddingRight: 6 },
     splitChip: {
       borderRadius: tokens.radius.pill,
       borderWidth: 1,
@@ -149,7 +149,7 @@ export default function TrainScreen() {
               <Text style={styles.splitsActionText}>+</Text>
             </Pressable>
           </View>
-          <View style={styles.splitRow}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.splitRow}>
             {workoutSplits.map((split) => (
               <Pressable
                 key={split.id}
@@ -161,7 +161,7 @@ export default function TrainScreen() {
                 <Text style={[styles.splitChipText, selectedSplit?.id === split.id && styles.splitChipTextActive]}>{split.name}</Text>
               </Pressable>
             ))}
-          </View>
+          </ScrollView>
           <Text style={styles.helper}>{selectedSplit?.description}</Text>
         </Card>
 
