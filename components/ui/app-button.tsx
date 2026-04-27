@@ -20,9 +20,20 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
       paddingHorizontal: 16,
       borderWidth: 1,
       overflow: 'hidden',
-    },
-    primary: {
       backgroundColor: '#42A5F5',
+      borderColor: tokens.colors.accentHover,
+      shadowColor: tokens.colors.accentGlow,
+      shadowOpacity: 0.32,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
+      color: '#F5F7FF',
+      zIndex: 1,
+    pressedPrimary: {
+      backgroundColor: tokens.colors.accentPressed,
+      borderColor: tokens.colors.accentPressed,
+    },
+      style={({ pressed }) => [styles.base, styles[variant], pressed && styles.pressed, pressed && variant === 'primary' && styles.pressedPrimary]}>
       borderColor: tokens.colors.accentHover,
       shadowColor: tokens.colors.accentGlow,
       shadowOpacity: 0.32,

@@ -51,11 +51,28 @@ export default function HomeScreen() {
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 6 },
       elevation: 4,
-    },
     primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12, zIndex: 1 },
-    secondaryAction: {
-      flex: 1,
-      minHeight: 38,
+    pressedBtn: { transform: [{ scale: 0.98 }], opacity: 0.94 },
+    pressedPrimary: { backgroundColor: tokens.colors.accentPressed, borderColor: tokens.colors.accentPressed },
+      backgroundColor: '#42A5F5',
+      borderColor: tokens.colors.accentHover,
+      overflow: 'hidden',
+      shadowColor: tokens.colors.accentGlow,
+      shadowOpacity: 0.36,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
+    resumeText: { color: '#F5F7FF', fontSize: 12, fontWeight: '800', zIndex: 1 },
+          <StatCard label="Workouts this week" value={String(weeklySummary.workoutsThisWeek)} accent="#42A5F5" />
+          <StatCard label="Total workouts" value={String(weeklySummary.totalWorkouts)} accent="#1E88E5" />
+          <StatCard label="Minutes this week" value={String(weeklySummary.totalMinutes)} accent="#1565C0" />
+          <StatCard label="Current streak" value={`${weeklySummary.streak} days`} accent="#42A5F5" />
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.primaryAction, pressed && styles.pressedBtn, pressed && styles.pressedPrimary]}>
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.resumeBtn, pressed && styles.pressedBtn, pressed && styles.pressedPrimary]}>
       borderRadius: tokens.radius.pill,
       backgroundColor: tokens.colors.input,
       borderWidth: 1,
