@@ -40,15 +40,20 @@ export default function TrainScreen() {
     badgeText: { color: tokens.colors.accent, fontSize: 11, fontWeight: '800' },
     entryCard: {
       flex: 1,
+      minHeight: 156,
       borderRadius: tokens.radius.md,
       borderWidth: 1,
       borderColor: tokens.colors.borderSubtle,
       backgroundColor: tokens.colors.input,
       padding: 12,
+      justifyContent: 'space-between',
+    },
+    entryBody: {
       gap: 6,
     },
     actionBtn: {
       minHeight: 42,
+      height: 42,
       borderRadius: tokens.radius.pill,
       borderWidth: 1,
       alignItems: 'center',
@@ -65,8 +70,8 @@ export default function TrainScreen() {
       elevation: 3,
     },
     actionSecondary: {
-      backgroundColor: tokens.colors.input,
-      borderColor: tokens.colors.borderSubtle,
+      backgroundColor: tokens.colors.surfaceElevated,
+      borderColor: tokens.colors.border,
     },
     actionPrimaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12 },
     actionSecondaryText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 12 },
@@ -102,15 +107,19 @@ export default function TrainScreen() {
           <SectionHeader title="Quick Entries" subtitle="Start from the section you need" />
           <View style={styles.row}>
             <View style={styles.entryCard}>
-              <Text style={styles.title}>Exercise Library</Text>
-              <Text style={styles.meta}>Browse movements and add them to active workouts.</Text>
+              <View style={styles.entryBody}>
+                <Text style={styles.title}>Exercise Library</Text>
+                <Text style={styles.meta}>Browse movements and add them to active workouts.</Text>
+              </View>
               <Pressable onPress={() => router.push('/start-workout')} style={({ pressed }) => [styles.actionBtn, styles.actionSecondary, pressed && styles.pressed]}>
                 <Text style={styles.actionSecondaryText}>Open Library</Text>
               </Pressable>
             </View>
             <View style={styles.entryCard}>
-              <Text style={styles.title}>Cardio Entry</Text>
-              <Text style={styles.meta}>Track a run, walk, or ride (placeholder flow).</Text>
+              <View style={styles.entryBody}>
+                <Text style={styles.title}>Cardio Entry</Text>
+                <Text style={styles.meta}>Track a run, walk, or ride (placeholder flow).</Text>
+              </View>
               <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionSecondary, pressed && styles.pressed]}>
                 <Text style={styles.actionSecondaryText}>Log Cardio</Text>
               </Pressable>
