@@ -89,11 +89,17 @@ export default function ProfileScreen() {
           <View style={styles.placeholderBox}><Text style={styles.placeholderText}>Calendar Heatmap Placeholder</Text></View>
         </Card>
 
-        <Card>
-          <SectionHeader title="Measurements" subtitle="Bodyweight and body metrics" />
+        <Card tone="ai">
+          <SectionHeader title="AI Body Analysis" subtitle="Bodyweight and body metrics" />
           <Text style={styles.item}>Weight: 181 lb</Text>
           <Text style={styles.item}>Body Fat: -- %</Text>
           <Text style={styles.item}>Chest / Waist / Arms: --</Text>
+        </Card>
+
+        <Card tone="ai">
+          <SectionHeader title="AI Coach" subtitle="Adaptive training guidance" />
+          <Text style={styles.item}>Recovery score: 78 (Ready for moderate intensity)</Text>
+          <Text style={styles.item}>Recommended focus: Upper push + zone 2 finisher</Text>
         </Card>
 
         <Card>

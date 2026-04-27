@@ -19,7 +19,24 @@ export default function HomeScreen() {
   const welcomeText = firstName ? `Welcome back, ${firstName}` : 'Welcome back';
 
   const styles = StyleSheet.create({
-    hero: { gap: 4 },
+    hero: {
+      gap: 4,
+      borderRadius: tokens.radius.lg,
+      padding: 14,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: 'rgba(68, 152, 255, 0.16)',
+      backgroundColor: 'rgba(14, 20, 34, 0.82)',
+    },
+    heroGlow: {
+      position: 'absolute',
+      width: 210,
+      height: 120,
+      borderRadius: 999,
+      top: -54,
+      left: -24,
+      backgroundColor: 'rgba(68, 173, 255, 0.14)',
+    },
     eyebrow: { color: tokens.colors.textSecondary, fontSize: 16, fontWeight: '700' },
     title: { color: tokens.colors.textPrimary, fontSize: 28, fontWeight: '800', lineHeight: 34 },
     subtitle: { color: tokens.colors.textSecondary, fontSize: 13, lineHeight: 18 },
@@ -40,17 +57,17 @@ export default function HomeScreen() {
       flex: 1,
       minHeight: 38,
       borderRadius: tokens.radius.pill,
-      backgroundColor: '#42A5F5',
+      backgroundColor: '#3AABFF',
       borderWidth: 1,
       borderColor: tokens.colors.accentHover,
       alignItems: 'center',
       justifyContent: 'center',
       overflow: 'hidden',
       shadowColor: tokens.colors.accentGlow,
-      shadowOpacity: 0.4,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 4,
+      shadowOpacity: 0.42,
+      shadowRadius: 13,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 5,
     },
     primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12, zIndex: 1 },
     secondaryAction: {
@@ -66,16 +83,7 @@ export default function HomeScreen() {
     secondaryText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 12 },
     pressedBtn: { transform: [{ scale: 0.98 }], opacity: 0.94 },
     pressedPrimary: { backgroundColor: tokens.colors.accentPressed, borderColor: tokens.colors.accentPressed },
-    continueCard: {
-      backgroundColor: tokens.colors.cardAlt,
-      borderColor: tokens.colors.accent,
-      gap: 10,
-      shadowColor: 'rgba(66, 165, 245, 0.12)',
-      shadowOpacity: 0.32,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
-    },
+    continueCard: { backgroundColor: tokens.colors.cardAlt, gap: 10 },
     continueMeta: { color: tokens.colors.textMuted, fontSize: 12 },
     continueTitle: { color: tokens.colors.textPrimary, fontSize: 18, fontWeight: '800' },
     continueFocus: { color: tokens.colors.textSecondary, fontSize: 13 },
@@ -86,7 +94,7 @@ export default function HomeScreen() {
       paddingHorizontal: 14,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#42A5F5',
+      backgroundColor: '#3AABFF',
       borderWidth: 1,
       borderColor: tokens.colors.accentHover,
       overflow: 'hidden',
@@ -106,6 +114,7 @@ export default function HomeScreen() {
     <View style={{ flex: 1 }}>
       <AppScreen>
         <View style={styles.hero}>
+          <View pointerEvents="none" style={styles.heroGlow} />
           <Text style={styles.eyebrow}>{welcomeText}</Text>
           <Text style={styles.title}>Ready for today&apos;s training?</Text>
           <Text style={styles.subtitle}>Let&apos;s keep your momentum and build on last session.</Text>
@@ -134,8 +143,8 @@ export default function HomeScreen() {
           </View>
         </Card>
 
-        <Card style={styles.continueCard}>
-          <SectionHeader title="Continue Workout" subtitle="Pick up where you left off" />
+        <Card tone="featured" style={styles.continueCard}>
+          <SectionHeader title="Today&apos;s Focus" subtitle="Pick up where you left off" />
           <Text style={styles.continueMeta}>{lastWorkout?.date ?? 'Today'} · {lastWorkout?.duration ?? '--'} · {lastWorkout?.volume ?? '--'}</Text>
           <View style={styles.continueRow}>
             <View style={{ flex: 1 }}>

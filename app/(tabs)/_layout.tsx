@@ -12,6 +12,7 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: tokens.colors.textPrimary,
         tabBarInactiveTintColor: tokens.colors.textMuted,
+        tabBarActiveBackgroundColor: 'rgba(58, 171, 255, 0.12)',
         sceneStyle: { backgroundColor: tokens.colors.background },
         tabBarStyle: {
           backgroundColor: tokens.colors.navBackground,
@@ -24,6 +25,11 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '700',
+        },
+        tabBarItemStyle: {
+          borderRadius: 12,
+          marginHorizontal: 4,
+          marginBottom: 4,
         },
       }}>
       <Tabs.Screen
