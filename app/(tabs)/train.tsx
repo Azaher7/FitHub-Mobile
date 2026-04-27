@@ -88,7 +88,7 @@ export default function TrainScreen() {
       borderWidth: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingHorizontal: 14,
+      paddingHorizontal: 12,
     },
     actionSecondary: { backgroundColor: 'transparent', borderColor: tokens.colors.accent },
     actionSecondaryText: { color: tokens.colors.accent, fontWeight: '800', fontSize: 12 },
