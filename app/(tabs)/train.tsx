@@ -117,10 +117,20 @@ export default function TrainScreen() {
       paddingHorizontal: 12,
       paddingVertical: 7,
       backgroundColor: tokens.colors.input,
+      overflow: 'hidden',
     },
-    actionPrimary: { backgroundColor: tokens.colors.accent, borderColor: tokens.colors.accent },
+    actionPrimary: {
+      backgroundColor: '#42A5F5',
+      borderColor: tokens.colors.accentHover,
+      shadowColor: tokens.colors.accentGlow,
+      shadowOpacity: 0.32,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
+    },
     actionBtnText: { color: tokens.colors.textSecondary, fontWeight: '700', fontSize: 12 },
-    actionPrimaryText: { color: '#062016' },
+    actionPrimaryText: { color: '#F5F7FF', zIndex: 1 },
+    pressedPrimary: { backgroundColor: tokens.colors.accentPressed, borderColor: tokens.colors.accentPressed },
     input: {
       minHeight: 42,
       borderRadius: tokens.radius.md,
@@ -217,7 +227,7 @@ export default function TrainScreen() {
               </Pressable>
             ))}
           </View>
-          <Pressable onPress={onCreatePlan} style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]}>
+          <Pressable onPress={onCreatePlan} style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed, pressed && styles.pressedPrimary]}>
             <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>{planLoading ? 'Saving...' : 'Create Plan'}</Text>
           </Pressable>
           {planLoading ? <Text style={styles.helper}>Syncing plans...</Text> : null}
@@ -258,7 +268,7 @@ export default function TrainScreen() {
                   </View>
                 </View>
                 <View style={styles.rowActions}>
-                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]} onPress={() => setShowPrToast(true)}>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed, pressed && styles.pressedPrimary]} onPress={() => setShowPrToast(true)}>
                     <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Add</Text>
                   </Pressable>
                   <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]} onPress={() => setSelectedExerciseId(exercise.id)}>
@@ -280,7 +290,7 @@ export default function TrainScreen() {
                 style={[styles.input, { minHeight: 86, paddingTop: 12 }]}
                 multiline
               />
-              <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]}>
+              <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed, pressed && styles.pressedPrimary]}>
                 <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Save (Mock)</Text>
               </Pressable>
             </Card>
@@ -298,7 +308,7 @@ export default function TrainScreen() {
                 <Text style={styles.title}>Timed Cardio</Text>
                 <Text style={styles.meta}>Start a simple timer-based run, ride, or walk session.</Text>
                 <View style={styles.rowActions}>
-                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]}>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed, pressed && styles.pressedPrimary]}>
                     <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Start Timer</Text>
                   </Pressable>
                 </View>
@@ -317,7 +327,7 @@ export default function TrainScreen() {
                   <View style={styles.stat}><Text style={styles.statLabel}>Time</Text><Text style={styles.statValue}>16:05</Text></View>
                 </View>
                 <View style={styles.rowActions}>
-                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]} onPress={() => setIsGpsLive(true)}>
+                  <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed, pressed && styles.pressedPrimary]} onPress={() => setIsGpsLive(true)}>
                     <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Start</Text>
                   </Pressable>
                   <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]}>
@@ -360,7 +370,7 @@ export default function TrainScreen() {
             <Text style={styles.meta}>Target muscles: {selectedExercise?.targetMuscles}</Text>
             <Text style={styles.meta}>{selectedExercise?.instructions}</Text>
             <View style={styles.rowActions}>
-              <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed]} onPress={() => setShowPrToast(true)}>
+              <Pressable style={({ pressed }) => [styles.actionBtn, styles.actionPrimary, pressed && styles.pressed, pressed && styles.pressedPrimary]} onPress={() => setShowPrToast(true)}>
                 <Text style={[styles.actionBtnText, styles.actionPrimaryText]}>Add to Workout</Text>
               </Pressable>
               <Pressable style={({ pressed }) => [styles.actionBtn, pressed && styles.pressed]} onPress={() => setSelectedExerciseId(null)}>

@@ -80,8 +80,8 @@ export default function ProfileScreen() {
         </Card>
 
         <View style={styles.statsGrid}>
-          <StatCard label="Workouts" value="124" accent="#6BFFB0" />
-          <StatCard label="Followers" value="0" accent="#72D9B0" />
+          <StatCard label="Workouts" value="124" accent="#42A5F5" />
+          <StatCard label="Followers" value="0" accent="#1E88E5" />
         </View>
 
         <Card>
