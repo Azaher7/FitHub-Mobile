@@ -40,7 +40,7 @@ export default function HomeScreen() {
       flex: 1,
       minHeight: 38,
       borderRadius: tokens.radius.pill,
-      backgroundColor: tokens.colors.accent,
+      backgroundColor: '#42A5F5',
       borderWidth: 1,
       borderColor: tokens.colors.accentHover,
       alignItems: 'center',
@@ -51,18 +51,6 @@ export default function HomeScreen() {
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 6 },
       elevation: 4,
-    },
-    primaryTopShade: {
-      ...StyleSheet.absoluteFillObject,
-      top: 0,
-      bottom: '50%',
-      backgroundColor: 'rgba(255, 255, 255, 0.16)',
-    },
-    primaryBottomShade: {
-      ...StyleSheet.absoluteFillObject,
-      top: '50%',
-      bottom: 0,
-      backgroundColor: 'rgba(21, 101, 192, 0.2)',
     },
     primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12, zIndex: 1 },
     secondaryAction: {
@@ -93,7 +81,7 @@ export default function HomeScreen() {
       paddingHorizontal: 14,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: tokens.colors.accent,
+      backgroundColor: '#42A5F5',
       borderWidth: 1,
       borderColor: tokens.colors.accentHover,
       overflow: 'hidden',
@@ -133,8 +121,6 @@ export default function HomeScreen() {
             <Pressable
               onPress={() => router.push('/start-workout')}
               style={({ pressed }) => [styles.primaryAction, pressed && styles.pressedBtn, pressed && styles.pressedPrimary]}>
-              <View pointerEvents="none" style={styles.primaryTopShade} />
-              <View pointerEvents="none" style={styles.primaryBottomShade} />
               <Text style={styles.primaryText}>Start Workout</Text>
             </Pressable>
             <Pressable onPress={() => router.push('/(tabs)/train')} style={({ pressed }) => [styles.secondaryAction, pressed && styles.pressedBtn]}>
@@ -154,8 +140,6 @@ export default function HomeScreen() {
             <Pressable
               onPress={() => router.push('/start-workout')}
               style={({ pressed }) => [styles.resumeBtn, pressed && styles.pressedBtn, pressed && styles.pressedPrimary]}>
-              <View pointerEvents="none" style={styles.primaryTopShade} />
-              <View pointerEvents="none" style={styles.primaryBottomShade} />
               <Text style={styles.resumeText}>{lastWorkout ? 'Resume' : 'Start'}</Text>
             </Pressable>
           </View>
