@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAppTheme } from '@/providers/theme-provider';
 
@@ -19,15 +19,28 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
       justifyContent: 'center',
       paddingHorizontal: 16,
       borderWidth: 1,
+      overflow: 'hidden',
     },
     primary: {
       backgroundColor: tokens.colors.accent,
-      borderColor: '#1E88E5',
-      shadowColor: 'rgba(66, 165, 245, 0.25)',
+      borderColor: tokens.colors.accentHover,
+      shadowColor: tokens.colors.accentGlow,
       shadowOpacity: 0.32,
       shadowRadius: 8,
       shadowOffset: { width: 0, height: 4 },
       elevation: 3,
+    },
+    primaryTopShade: {
+      ...StyleSheet.absoluteFillObject,
+      top: 0,
+      bottom: '50%',
+      backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    },
+    primaryBottomShade: {
+      ...StyleSheet.absoluteFillObject,
+      top: '50%',
+      bottom: 0,
+      backgroundColor: 'rgba(21, 101, 192, 0.2)',
     },
     secondary: {
       backgroundColor: tokens.colors.surfaceElevated,
@@ -43,6 +56,7 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
     },
     primaryLabel: {
       color: '#F5F7FF',
+      zIndex: 1,
     },
     secondaryLabel: {
       color: tokens.colors.textPrimary,
@@ -53,12 +67,18 @@ export function AppButton({ children, onPress, variant = 'primary' }: AppButtonP
     pressed: {
       opacity: 0.82,
     },
+    pressedPrimary: {
+      backgroundColor: tokens.colors.accentPressed,
+      borderColor: tokens.colors.accentPressed,
+    },
   });
 
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.base, styles[variant], pressed && styles.pressed]}>
+      style={({ pressed }) => [styles.base, styles[variant], pressed && styles.pressed, pressed && variant === 'primary' && styles.pressedPrimary]}>
+      {variant === 'primary' ? <View pointerEvents="none" style={styles.primaryTopShade} /> : null}
+      {variant === 'primary' ? <View pointerEvents="none" style={styles.primaryBottomShade} /> : null}
       <Text style={[styles.label, styles[`${variant}Label`]]}>{children}</Text>
     </Pressable>
   );

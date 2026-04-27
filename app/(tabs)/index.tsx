@@ -42,16 +42,29 @@ export default function HomeScreen() {
       borderRadius: tokens.radius.pill,
       backgroundColor: tokens.colors.accent,
       borderWidth: 1,
-      borderColor: '#1E88E5',
+      borderColor: tokens.colors.accentHover,
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: 'rgba(66, 165, 245, 0.25)',
+      overflow: 'hidden',
+      shadowColor: tokens.colors.accentGlow,
       shadowOpacity: 0.4,
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 6 },
       elevation: 4,
     },
-    primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12 },
+    primaryTopShade: {
+      ...StyleSheet.absoluteFillObject,
+      top: 0,
+      bottom: '50%',
+      backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    },
+    primaryBottomShade: {
+      ...StyleSheet.absoluteFillObject,
+      top: '50%',
+      bottom: 0,
+      backgroundColor: 'rgba(21, 101, 192, 0.2)',
+    },
+    primaryText: { color: '#F5F7FF', fontWeight: '800', fontSize: 12, zIndex: 1 },
     secondaryAction: {
       flex: 1,
       minHeight: 38,
@@ -63,7 +76,8 @@ export default function HomeScreen() {
       justifyContent: 'center',
     },
     secondaryText: { color: tokens.colors.textPrimary, fontWeight: '700', fontSize: 12 },
-    pressedBtn: { transform: [{ scale: 0.98 }], opacity: 0.92 },
+    pressedBtn: { transform: [{ scale: 0.98 }], opacity: 0.94 },
+    pressedPrimary: { backgroundColor: tokens.colors.accentPressed, borderColor: tokens.colors.accentPressed },
     continueCard: {
       backgroundColor: tokens.colors.cardAlt,
       borderColor: tokens.colors.accent,
@@ -81,14 +95,15 @@ export default function HomeScreen() {
       justifyContent: 'center',
       backgroundColor: tokens.colors.accent,
       borderWidth: 1,
-      borderColor: '#1E88E5',
-      shadowColor: 'rgba(66, 165, 245, 0.25)',
+      borderColor: tokens.colors.accentHover,
+      overflow: 'hidden',
+      shadowColor: tokens.colors.accentGlow,
       shadowOpacity: 0.36,
       shadowRadius: 8,
       shadowOffset: { width: 0, height: 4 },
       elevation: 3,
     },
-    resumeText: { color: '#F5F7FF', fontSize: 12, fontWeight: '800' },
+    resumeText: { color: '#F5F7FF', fontSize: 12, fontWeight: '800', zIndex: 1 },
     suggestionsRow: { gap: 10, paddingRight: 8 },
     workoutTitle: { color: tokens.colors.textPrimary, fontSize: 16, fontWeight: '700' },
     meta: { color: tokens.colors.textSecondary, fontSize: 12, lineHeight: 18 },
@@ -115,7 +130,11 @@ export default function HomeScreen() {
         <Card>
           <SectionHeader title="Quick Actions" />
           <View style={styles.quickActions}>
-            <Pressable onPress={() => router.push('/start-workout')} style={({ pressed }) => [styles.primaryAction, pressed && styles.pressedBtn]}>
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.primaryAction, pressed && styles.pressedBtn, pressed && styles.pressedPrimary]}>
+              <View pointerEvents="none" style={styles.primaryTopShade} />
+              <View pointerEvents="none" style={styles.primaryBottomShade} />
               <Text style={styles.primaryText}>Start Workout</Text>
             </Pressable>
             <Pressable onPress={() => router.push('/(tabs)/train')} style={({ pressed }) => [styles.secondaryAction, pressed && styles.pressedBtn]}>
@@ -132,7 +151,11 @@ export default function HomeScreen() {
               <Text style={styles.continueTitle}>{lastWorkout?.title ?? 'No active workout yet'}</Text>
               <Text style={styles.continueFocus}>{lastWorkout?.focus ?? 'Start a new session when ready.'}</Text>
             </View>
-            <Pressable onPress={() => router.push('/start-workout')} style={({ pressed }) => [styles.resumeBtn, pressed && styles.pressedBtn]}>
+            <Pressable
+              onPress={() => router.push('/start-workout')}
+              style={({ pressed }) => [styles.resumeBtn, pressed && styles.pressedBtn, pressed && styles.pressedPrimary]}>
+              <View pointerEvents="none" style={styles.primaryTopShade} />
+              <View pointerEvents="none" style={styles.primaryBottomShade} />
               <Text style={styles.resumeText}>{lastWorkout ? 'Resume' : 'Start'}</Text>
             </Pressable>
           </View>

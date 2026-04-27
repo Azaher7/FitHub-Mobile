@@ -19,25 +19,41 @@ export function FloatingActionButton() {
       gap: 6,
       height: 46,
       borderRadius: tokens.radius.pill,
-      backgroundColor: '#42A5F5',
+      backgroundColor: tokens.colors.accent,
       borderWidth: 1,
-      borderColor: '#1E88E5',
+      borderColor: tokens.colors.accentHover,
       paddingHorizontal: 14,
-      shadowColor: 'rgba(66, 165, 245, 0.25)',
+      overflow: 'hidden',
+      shadowColor: tokens.colors.accentGlow,
       shadowOpacity: 0.4,
       shadowRadius: 14,
       shadowOffset: { width: 0, height: 6 },
       elevation: 6,
     },
+    topShade: {
+      ...StyleSheet.absoluteFillObject,
+      top: 0,
+      bottom: '48%',
+      backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    },
+    bottomShade: {
+      ...StyleSheet.absoluteFillObject,
+      top: '48%',
+      bottom: 0,
+      backgroundColor: 'rgba(21, 101, 192, 0.22)',
+    },
     pressed: {
       transform: [{ scale: 0.97 }],
-      backgroundColor: '#1565C0',
+      backgroundColor: tokens.colors.accentPressed,
+      borderColor: tokens.colors.accentPressed,
     },
     label: {
       color: '#F5F7FF',
       fontWeight: '800',
       fontSize: 13,
+      zIndex: 1,
     },
+    icon: { zIndex: 1 },
   });
 
   return (
@@ -45,7 +61,9 @@ export function FloatingActionButton() {
       <Pressable
         onPress={() => router.push('/start-workout')}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
-        <Ionicons name="add" size={20} color="#F5F7FF" />
+        <View pointerEvents="none" style={styles.topShade} />
+        <View pointerEvents="none" style={styles.bottomShade} />
+        <Ionicons name="add" size={20} color="#F5F7FF" style={styles.icon} />
         <Text style={styles.label}>Start Workout</Text>
       </Pressable>
     </View>
